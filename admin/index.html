@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blog Admin Dashboard</title>
+
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+    crossorigin="anonymous"
+  />
+
+  <style>
+    body {
+      background-color: #f5f7fb;
+    }
+    .sidebar {
+      min-height: 100vh;
+      background: #111827;
+      color: #e5e7eb;
+    }
+    .sidebar .nav-link {
+      color: #9ca3af;
+      border-radius: 0.375rem;
+      margin-bottom: 0.25rem;
+    }
+    .sidebar .nav-link.active,
+    .sidebar .nav-link:hover {
+      color: #f9fafb;
+      background-color: #1f2937;
+    }
+    .sidebar .navbar-brand {
+      color: #f9fafb;
+    }
+    .content-header {
+      border-bottom: 1px solid #e5e7eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row flex-nowrap">
+      <!-- Sidebar -->
+      <nav class="col-12 col-md-3 col-lg-2 d-md-block sidebar px-3 py-3">
+        <div class="d-flex align-items-center mb-4">
+          <span class="navbar-brand fw-bold">Blog Admin</span>
+        </div>
+        <ul class="nav nav-pills flex-column" id="sidebarNav">
+          <li class="nav-item">
+            <a href="#" class="nav-link active">Overview</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">Posts</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">Categories &amp; Tags</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">Drafts &amp; Scheduling</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">Analytics</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">Users &amp; Permissions</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">SEO Tools</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">Media Library</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">Comments</a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="col px-0">
+        <header class="content-header bg-white px-3 px-md-4 py-3 d-flex justify-content-between align-items-center">
+          <div>
+            <h1 class="h5 mb-1">Admin Dashboard</h1>
+            <p class="text-muted mb-0 small">
+              Skeleton layout for the blog admin panel. Hook your features here.
+            </p>
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary btn-sm">Preview Blog</button>
+            <button class="btn btn-primary btn-sm">
+              <span class="me-1">+</span> New Post
+            </button>
+          </div>
+        </header>
+
+        <div class="p-3 p-md-4">
+          <div class="row g-3">
+            <div class="col-12 col-md-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <h2 class="h6 mb-2">Posts</h2>
+                  <p class="text-muted small mb-3">
+                    Creation, editing, publishing/unpublishing of blog posts.
+                  </p>
+                  <button class="btn btn-sm btn-outline-primary">Go to Posts</button>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <h2 class="h6 mb-2">Categories &amp; Tags</h2>
+                  <p class="text-muted small mb-3">
+                    Organise posts into categories and tags for easier navigation and SEO.
+                  </p>
+                  <button class="btn btn-sm btn-outline-primary">Manage Taxonomy</button>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <h2 class="h6 mb-2">Drafts &amp; Scheduling</h2>
+                  <p class="text-muted small mb-3">
+                    Draft posts, schedule publication and manage editorial calendar.
+                  </p>
+                  <button class="btn btn-sm btn-outline-primary">Open Scheduler</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-3 mt-1">
+            <div class="col-12 col-md-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <h2 class="h6 mb-2">Analytics</h2>
+                  <p class="text-muted small mb-3">
+                    Track post performance, traffic and engagement metrics.
+                  </p>
+                  <button class="btn btn-sm btn-outline-primary">View Analytics</button>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <h2 class="h6 mb-2">Users &amp; Permissions</h2>
+                  <p class="text-muted small mb-3">
+                    Manage admin users, roles and access levels.
+                  </p>
+                  <button class="btn btn-sm btn-outline-primary">Manage Users</button>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <h2 class="h6 mb-2">SEO, Media &amp; Comments</h2>
+                  <p class="text-muted small mb-3">
+                    SEO tools, media library and comment moderation.
+                  </p>
+                  <button class="btn btn-sm btn-outline-primary">Open Tools</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert alert-info mt-4 mb-0 small" role="alert">
+            This is just the Bootstrap scaffold for the admin dashboard. Your team can replace these cards
+            with full pages/components for each of the nine features you described.
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS bundle -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"
+  ></script>
+</body>
+</html>
+
