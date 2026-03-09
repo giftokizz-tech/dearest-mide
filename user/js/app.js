@@ -9,13 +9,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Main initialization function
 function initializeApp() {
-    // Initialize AOS (Animate on Scroll)
-    AOS.init({
-        duration: 800,
-        easing: 'ease-in-out',
-        once: true,
-        offset: 100
-    });
+    // Initialize AOS (Animate on Scroll) - with error handling
+    if (typeof AOS !== 'undefined') {
+        try {
+            AOS.init({
+                duration: 800,
+                easing: 'ease-in-out',
+                once: true,
+                offset: 100
+            });
+        } catch (err) {
+            console.warn('AOS initialization failed:', err);
+        }
+    } else {
+        console.warn('AOS library not loaded');
+    }
 
     // Initialize components
     initThemeToggle();
@@ -31,15 +39,16 @@ function initializeApp() {
 /* ===================== */
 function initThemeToggle() {
     const themeToggle = document.getElementById('themeToggle');
-    const htmlElement = document.documentElement;
     const body = document.body;
+
+    if (!themeToggle || !body) return; // Exit if elements not found
 
     // Load saved theme from localStorage
     const savedTheme = localStorage.getItem('theme') || 'light-mode';
     applyTheme(savedTheme);
 
     // Theme toggle click handler
-    themeToggle?.addEventListener('click', function() {
+    themeToggle.addEventListener('click', function() {
         const currentTheme = body.classList.contains('dark-mode') ? 'dark-mode' : 'light-mode';
         const newTheme = currentTheme === 'dark-mode' ? 'light-mode' : 'dark-mode';
         applyTheme(newTheme);
@@ -48,12 +57,12 @@ function initThemeToggle() {
     function applyTheme(theme) {
         if (theme === 'dark-mode') {
             body.classList.add('dark-mode');
-            themeToggle?.classList.add('active');
-            themeToggle?.innerHTML = '<i class="fas fa-sun"></i>';
+            themeToggle.classList.add('active');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
         } else {
             body.classList.remove('dark-mode');
-            themeToggle?.classList.remove('active');
-            themeToggle?.innerHTML = '<i class="fas fa-moon"></i>';
+            themeToggle.classList.remove('active');
+            themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
         }
         localStorage.setItem('theme', theme);
     }
@@ -64,18 +73,20 @@ function initThemeToggle() {
 /* ===================== */
 function initBackToTop() {
     const backToTopBtn = document.getElementById('backToTop');
+    
+    if (!backToTopBtn) return; // Exit if button not found
 
     // Show button when scrolled down
     window.addEventListener('scroll', function() {
         if (window.pageYOffset > 300) {
-            backToTopBtn?.classList.add('show');
+            backToTopBtn.classList.add('show');
         } else {
-            backToTopBtn?.classList.remove('show');
+            backToTopBtn.classList.remove('show');
         }
     });
 
     // Scroll to top
-    backToTopBtn?.addEventListener('click', function(e) {
+    backToTopBtn.addEventListener('click', function(e) {
         e.preventDefault();
         window.scrollTo({
             top: 0,
@@ -91,14 +102,16 @@ function initSearch() {
     const heroSearchBtn = document.getElementById('heroSearchBtn');
     const heroSearch = document.getElementById('heroSearch');
 
-    heroSearchBtn?.addEventListener('click', function() {
-        const query = heroSearch?.value.trim();
+    if (!heroSearchBtn || !heroSearch) return; // Exit if elements not found
+
+    heroSearchBtn.addEventListener('click', function() {
+        const query = heroSearch.value.trim();
         if (query) {
             redirectToSearch(query);
         }
     });
 
-    heroSearch?.addEventListener('keypress', function(e) {
+    heroSearch.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             const query = this.value.trim();
             if (query) {
@@ -118,11 +131,17 @@ function initSearch() {
 function initNewsletter() {
     const newsletterForm = document.getElementById('newsletterForm');
 
-    newsletterForm?.addEventListener('submit', function(e) {
+    if (!newsletterForm) return; // Exit if form not found
+
+    newsletterForm.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        const email = this.querySelector('input[type="email"]').value;
+        const emailInput = this.querySelector('input[type="email"]');
         const button = this.querySelector('button');
+        
+        if (!emailInput || !button) return;
+
+        const email = emailInput.value;
         const originalText = button.textContent;
 
         // Simulate submission
@@ -150,10 +169,14 @@ function initNewsletter() {
     });
 
     function saveNewsletterEmail(email) {
-        const emails = JSON.parse(localStorage.getItem('newsletterEmails') || '[]');
-        if (!emails.includes(email)) {
-            emails.push(email);
-            localStorage.setItem('newsletterEmails', JSON.stringify(emails));
+        try {
+            const emails = JSON.parse(localStorage.getItem('newsletterEmails') || '[]');
+            if (!emails.includes(email)) {
+                emails.push(email);
+                localStorage.setItem('newsletterEmails', JSON.stringify(emails));
+            }
+        } catch (err) {
+            console.warn('Could not save newsletter email:', err);
         }
     }
 }
@@ -165,11 +188,9 @@ function initDynamicContent() {
     // Simulate loading more posts (In production, this would be an API call)
     const loadMoreBtn = document.querySelector('.btn-load-more');
 
-    loadMoreBtn?.addEventListener('click', function() {
-        loadMorePosts();
-    });
+    if (!loadMoreBtn) return; // Exit if button not found
 
-    function loadMorePosts() {
+    loadMoreBtn.addEventListener('click', function() {
         const button = this;
         button.disabled = true;
         button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
@@ -184,7 +205,7 @@ function initDynamicContent() {
                 window.location.href = 'pages/search.html';
             }, 1000);
         }, 1500);
-    }
+    });
 }
 
 /* ===================== */
@@ -195,13 +216,15 @@ function initScrollAnimations() {
     let lastScrollTop = 0;
     const navbar = document.querySelector('.navbar');
 
+    if (!navbar) return; // Exit if navbar not found
+
     window.addEventListener('scroll', function() {
         let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
         if (scrollTop > 100) {
-            navbar?.classList.add('shadow-lg');
+            navbar.classList.add('shadow-lg');
         } else {
-            navbar?.classList.remove('shadow-lg');
+            navbar.classList.remove('shadow-lg');
         }
 
         lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
@@ -287,12 +310,12 @@ function debounce(func, delay) {
 
 // Throttle function
 function throttle(func, limit) {
-    let inThrottle;
+    let inThrottle = false;
     return function(...args) {
         if (!inThrottle) {
             func(...args);
             inThrottle = true;
-            setTimeout(() => inThrottle = false, limit);
+            setTimeout(() => { inThrottle = false; }, limit);
         }
     };
 }
