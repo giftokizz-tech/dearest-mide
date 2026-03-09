@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Post - Dearest Mide</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AOS (Animate On Scroll) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .post-header {
+            background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+            color: white;
+            padding: 4rem 0;
+            margin-bottom: 3rem;
+        }
+
+        .post-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1.3;
+            margin-bottom: 1.5rem;
+        }
+
+        .post-meta-header {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            font-size: 1rem;
+        }
+
+        .post-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .author-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .author-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid #6f42c1;
+            flex-shrink: 0;
+        }
+
+        .author-info h5 {
+            margin-bottom: 0.5rem;
+        }
+
+        .author-bio {
+            color: #888;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .author-social {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .share-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .share-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .share-btn.twitter {
+            background: #1DA1F2;
+            color: white;
+        }
+
+        .share-btn.facebook {
+            background: #1877F2;
+            color: white;
+        }
+
+        .share-btn.linkedin {
+            background: #0A66C2;
+            color: white;
+        }
+
+        .share-btn.email {
+            background: #EA4335;
+            color: white;
+        }
+
+        .share-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .post-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .post-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 1rem;
+            margin: 2rem 0;
+        }
+
+        .post-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .tag-badge {
+            background: #f0f0f0;
+            color: #6f42c1;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .tag-badge:hover {
+            background: #6f42c1;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .related-posts {
+            background: #f8f9fa;
+            padding: 3rem 0;
+            margin: 4rem 0;
+            border-radius: 1rem;
+        }
+
+        .comments-section {
+            margin-top: 4rem;
+            padding-top: 3rem;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .comment {
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #6f42c1;
+            background: #f8f9fa;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .comment:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .comment-author {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .comment-date {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .comment-content {
+            margin-top: 1rem;
+            line-height: 1.6;
+        }
+
+        .comment-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .comment-form textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #6f42c1, #e83e8c);
+            width: 0;
+            z-index: 9999;
+            transition: width 0.2s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Reading Progress Bar -->
+    <div class="reading-progress" id="readingProgress"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-gradient" href="../index.html">
+                <i class="fas fa-feather-alt me-2"></i>Dearest Mide
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="search.html">All Articles</a>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <button class="btn btn-sm btn-outline-primary" id="themeToggle" title="Toggle Dark Mode">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Post Header -->
+    <div class="post-header">
+        <div class="container">
+            <div data-aos="fade-up">
+                <span class="badge bg-light text-dark mb-3">Technology</span>
+                <h1>The Future of Web Development in 2024</h1>
+                <div class="post-meta-header">
+                    <div class="post-meta-item">
+                        <i class="far fa-calendar"></i>
+                        <span>March 8, 2024</span>
+                    </div>
+                    <div class="post-meta-item">
+                        <i class="far fa-clock"></i>
+                        <span>5 min read</span>
+                    </div>
+                    <div class="post-meta-item">
+                        <i class="far fa-eye"></i>
+                        <span>1,250 views</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container py-5">
+        <div class="row">
+            <!-- Article Content -->
+            <div class="col-lg-8">
+                <!-- Featured Image -->
+                <img src="https://images.unsplash.com/photo-1633356122544-f134324ef6db?w=800&h=500&fit=crop" class="img-fluid rounded-3 mb-4" alt="Post Image" data-aos="zoom-in">
+
+                <!-- Author Card -->
+                <div class="author-card" data-aos="fade-up">
+                    <img src="https://i.pravatar.cc/80?img=1" alt="John Developer" class="author-avatar">
+                    <div class="flex-grow-1">
+                        <h5 class="mb-1">John Developer</h5>
+                        <p class="author-bio">
+                            Full-stack developer passionate about building scalable web applications. Loves sharing knowledge and exploring new technologies.
+                        </p>
+                        <div class="author-social">
+                            <a href="#" class="text-primary" title="Twitter"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="text-primary" title="GitHub"><i class="fab fa-github"></i></a>
+                            <a href="#" class="text-primary" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Post Content -->
+                <article class="post-content" data-aos="fade-up">
+                    <p>
+                        The landscape of web development continues to evolve at a rapid pace. As we step into 2024, 
+                        developers and companies are embracing new technologies, frameworks, and methodologies to build 
+                        more efficient, scalable, and user-friendly applications.
+                    </p>
+
+                    <h3 class="mt-4 mb-3 fw-bold">The Rise of AI-Powered Development</h3>
+                    <p>
+                        Artificial Intelligence is no longer just a buzzword—it's becoming an integral part of the development 
+                        workflow. AI-powered tools are helping developers write code faster, identify bugs more efficiently, 
+                        and optimize performance. Tools like GitHub Copilot and similar AI assistants are changing how we approach 
+                        coding.
+                    </p>
+
+                    <h3 class="mt-4 mb-3 fw-bold">Framework Evolution</h3>
+                    <p>
+                        React, Vue, and Angular continue to dominate, but newer frameworks like Svelte and Astro are gaining 
+                        traction. The focus is shifting towards better performance, smaller bundle sizes, and improved developer 
+                        experience. Server-side rendering and static generation are becoming more popular, leading to faster 
+                        page loads and better SEO.
+                    </p>
+
+                    <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=400&fit=crop" alt="Framework trends" class="rounded-3">
+
+                    <h3 class="mt-4 mb-3 fw-bold">The Importance of Web Performance</h3>
+                    <p>
+                        User experience is paramount. Web Core Vitals metrics (LCP, FID, CLS) are becoming crucial factors in 
+                        Google's ranking algorithm. Developers are focusing more on optimizing performance through lazy loading, 
+                        code splitting, and efficient resource management.
+                    </p>
+
+                    <h3 class="mt-4 mb-3 fw-bold">Security First Approach</h3>
+                    <p>
+                        With cyber threats increasing, security is no longer an afterthought. Developers are implementing security 
+                        best practices from the start, including proper authentication mechanisms, encryption, and regular security 
+                        audits. Zero-trust security models are becoming the industry standard.
+                    </p>
+
+                    <h3 class="mt-4 mb-3 fw-bold">Conclusion</h3>
+                    <p>
+                        2024 is an exciting year for web development. By staying updated with these trends and investing in continuous 
+                        learning, developers can build better applications that meet the demands of modern users and businesses.
+                    </p>
+
+                    <!-- Tags -->
+                    <div class="post-tags">
+                        <span class="tag-badge"><i class="fas fa-tag me-1"></i> Web Development</span>
+                        <span class="tag-badge"><i class="fas fa-tag me-1"></i> JavaScript</span>
+                        <span class="tag-badge"><i class="fas fa-tag me-1"></i> Framework</span>
+                        <span class="tag-badge"><i class="fas fa-tag me-1"></i> Trends</span>
+                        <span class="tag-badge"><i class="fas fa-tag me-1"></i> Performance</span>
+                    </div>
+
+                    <!-- Share Buttons -->
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <div>
+                            <p class="mb-0 fw-bold">Share this article:</p>
+                        </div>
+                        <div class="share-buttons">
+                            <button class="share-btn twitter" title="Share on Twitter">
+                                <i class="fab fa-twitter"></i>
+                            </button>
+                            <button class="share-btn facebook" title="Share on Facebook">
+                                <i class="fab fa-facebook"></i>
+                            </button>
+                            <button class="share-btn linkedin" title="Share on LinkedIn">
+                                <i class="fab fa-linkedin"></i>
+                            </button>
+                            <button class="share-btn email" title="Share via Email">
+                                <i class="fas fa-envelope"></i>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Related Posts -->
+                <section class="related-posts rounded-3">
+                    <div class="container">
+                        <h3 class="fw-bold mb-4" data-aos="fade-up">Related Articles</h3>
+                        
+                        <div class="row g-4">
+                            <div class="col-md-6" data-aos="zoom-in">
+                                <div class="post-card h-100 overflow-hidden">
+                                    <div class="post-image-wrapper position-relative">
+                                        <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=300&fit=crop" class="img-fluid post-image" alt="Post">
+                                        <div class="overlay-gradient-post"></div>
+                                    </div>
+                                    <div class="post-body p-3">
+                                        <h5 class="post-title fw-bold mb-2">Building Scalable Applications with Node.js</h5>
+                                        <p class="post-excerpt text-muted mb-3">Learn best practices for creating high-performance backend systems...</p>
+                                        <a href="post-detail.html" class="btn-link-arrow">Read More <i class="fas fa-arrow-right ms-1"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6" data-aos="zoom-in" data-aos-delay="100">
+                                <div class="post-card h-100 overflow-hidden">
+                                    <div class="post-image-wrapper position-relative">
+                                        <img src="https://images.unsplash.com/photo-1626699365915-25cf8e1535b9?w=500&h=300&fit=crop" class="img-fluid post-image" alt="Post">
+                                        <div class="overlay-gradient-post"></div>
+                                    </div>
+                                    <div class="post-body p-3">
+                                        <h5 class="post-title fw-bold mb-2">Complete Guide to React Hooks</h5>
+                                        <p class="post-excerpt text-muted mb-3">Master React hooks and learn advanced state management patterns...</p>
+                                        <a href="post-detail.html" class="btn-link-arrow">Read More <i class="fas fa-arrow-right ms-1"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Comments Section -->
+                <section class="comments-section">
+                    <h3 class="fw-bold mb-4" data-aos="fade-up">Comments <span class="badge bg-primary">3</span></h3>
+
+                    <!-- Comment Form -->
+                    <form class="comment-form" id="commentForm" data-aos="fade-up">
+                        <h5 class="mb-3 fw-bold">Leave a Comment</h5>
+                        <div class="mb-3">
+                            <input type="text" class="form-control form-control-lg" placeholder="Your Name" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="email" class="form-control form-control-lg" placeholder="Your Email" required>
+                        </div>
+                        <div class="mb-3">
+                            <textarea class="form-control" placeholder="Your comment..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-send me-2"></i>Post Comment
+                        </button>
+                    </form>
+
+                    <!-- Existing Comments -->
+                    <div data-aos="fade-up">
+                        <div class="comment">
+                            <div class="comment-author">Sarah Designer</div>
+                            <div class="comment-date"><i class="far fa-clock me-1"></i>2 hours ago</div>
+                            <div class="comment-content">
+                                This is an insightful article! The points about AI-powered development tools really resonate with my experience. 
+                                I've been using assistant tools and they've genuinely improved my productivity.
+                            </div>
+                        </div>
+
+                        <div class="comment">
+                            <div class="comment-author">Mike Code</div>
+                            <div class="comment-date"><i class="far fa-clock me-1"></i>5 hours ago</div>
+                            <div class="comment-content">
+                                Great overview of the current trends! I would add that TypeScript adoption is also growing rapidly. 
+                                Many teams are now using it as a standard for new projects.
+                            </div>
+                        </div>
+
+                        <div class="comment">
+                            <div class="comment-author">Emma Tech</div>
+                            <div class="comment-date"><i class="far fa-clock me-1"></i>1 day ago</div>
+                            <div class="comment-content">
+                                Perfect timing! I'm currently evaluating new frameworks for my next project. 
+                                The section on framework evolution was particularly helpful. Thanks for sharing!
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Newsletter Signup Sidebar -->
+                <div class="bg-gradient text-white p-4 rounded-3 mb-4" data-aos="fade-left" style="background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);">
+                    <h5 class="fw-bold mb-3">
+                        <i class="fas fa-bell me-2"></i>Stay Updated
+                    </h5>
+                    <p class="small mb-3">Get notified about new articles and updates in your inbox.</p>
+                    <form class="d-flex gap-2">
+                        <input type="email" class="form-control form-control-sm" placeholder="Your email" required>
+                        <button type="submit" class="btn btn-light btn-sm fw-bold">Subscribe</button>
+                    </form>
+                </div>
+
+                <!-- Categories -->
+                <div class="bg-light p-4 rounded-3 mb-4" data-aos="fade-left" data-aos-delay="100">
+                    <h5 class="fw-bold mb-3">
+                        <i class="fas fa-folder me-2"></i>Categories
+                    </h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="search.html?category=technology" class="text-decoration-none">Technology <span class="badge bg-primary ms-2">24</span></a></li>
+                        <li class="mb-2"><a href="search.html?category=lifestyle" class="text-decoration-none">Lifestyle <span class="badge bg-danger ms-2">18</span></a></li>
+                        <li class="mb-2"><a href="search.html?category=travel" class="text-decoration-none">Travel <span class="badge bg-success ms-2">21</span></a></li>
+                        <li><a href="search.html?category=growth" class="text-decoration-none">Personal Growth <span class="badge bg-warning ms-2">32</span></a></li>
+                    </ul>
+                </div>
+
+                <!-- Popular Posts -->
+                <div class="bg-light p-4 rounded-3" data-aos="fade-left" data-aos-delay="200">
+                    <h5 class="fw-bold mb-3">
+                        <i class="fas fa-fire me-2"></i>Popular Posts
+                    </h5>
+                    <div class="mb-3 pb-3 border-bottom">
+                        <h6 class="mb-1"><a href="#" class="text-decoration-none">UI Design Trends That Will Dominate 2024</a></h6>
+                        <small class="text-muted"><i class="far fa-fire me-1"></i>2.5k views</small>
+                    </div>
+                    <div class="mb-3 pb-3 border-bottom">
+                        <h6 class="mb-1"><a href="#" class="text-decoration-none">Productivity Hacks: Work Smarter</a></h6>
+                        <small class="text-muted"><i class="far fa-fire me-1"></i>1.8k views</small>
+                    </div>
+                    <div>
+                        <h6 class="mb-1"><a href="#" class="text-decoration-none">Exploring Hidden Gems: Travel Guide</a></h6>
+                        <small class="text-muted"><i class="far fa-fire me-1"></i>1.2k views</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-light py-5 mt-5">
+        <div class="container">
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <h5 class="fw-bold mb-3">Dearest Mide</h5>
+                    <p class="text-muted">Your space for inspiration, knowledge, and personal growth.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="fw-bold mb-3">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="../index.html" class="text-muted footer-link">Home</a></li>
+                        <li class="mb-2"><a href="search.html" class="text-muted footer-link">All Articles</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted footer-link">About</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="fw-bold mb-3">Categories</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="search.html?category=technology" class="text-muted footer-link">Technology</a></li>
+                        <li class="mb-2"><a href="search.html?category=lifestyle" class="text-muted footer-link">Lifestyle</a></li>
+                        <li class="mb-2"><a href="search.html?category=travel" class="text-muted footer-link">Travel</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="fw-bold mb-3">Social</h5>
+                    <div class="d-flex gap-2">
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-secondary">
+            <p class="text-center text-muted mb-0">&copy; 2024 Dearest Mide. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button type="button" class="btn btn-primary btn-floating" id="backToTop" title="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- AOS JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="../js/app.js"></script>
+    <script>
+        // Reading progress bar
+        function updateReadingProgress() {
+            const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (window.pageYOffset / totalHeight) * 100;
+            document.getElementById('readingProgress').style.width = progress + '%';
+        }
+
+        window.addEventListener('scroll', updateReadingProgress);
+
+        // Comment form submission
+        document.getElementById('commentForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const button = this.querySelector('button[type="submit"]');
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Posting...';
+
+            setTimeout(() => {
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-send me-2"></i>Post Comment';
+                this.reset();
+                appUtils.showToast('Comment posted successfully!', 'success');
+            }, 1500);
+        });
+
+        // Share buttons
+        document.querySelectorAll('.share-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const platform = this.classList[1];
+                const title = 'The Future of Web Development in 2024';
+                const url = window.location.href;
+
+                let shareUrl = '';
+                if (platform === 'twitter') {
+                    shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`;
+                } else if (platform === 'facebook') {
+                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+                } else if (platform === 'linkedin') {
+                    shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+                } else if (platform === 'email') {
+                    shareUrl = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(url)}`;
+                }
+
+                if (shareUrl) {
+                    window.open(shareUrl, '_blank');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

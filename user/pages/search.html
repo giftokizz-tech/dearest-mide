@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search & Filter - Dearest Mide</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AOS (Animate On Scroll) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .search-hero {
+            background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-form input {
+            flex: 1;
+            border-radius: 0.5rem;
+            border: none;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .filters-sidebar {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            height: fit-content;
+            position: sticky;
+            top: 80px;
+        }
+
+        body.dark-mode .filters-sidebar {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+        }
+
+        .filter-group {
+            margin-bottom: 2rem;
+        }
+
+        .filter-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-group h6 {
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+            color: #6f42c1;
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+        }
+
+        .filter-option input {
+            cursor: pointer;
+        }
+
+        .filter-option label {
+            margin-left: 0.5rem;
+            cursor: pointer;
+            margin-bottom: 0;
+            flex: 1;
+        }
+
+        .filter-option span {
+            color: #999;
+            font-size: 0.9rem;
+            margin-left: auto;
+        }
+
+        .results-grid {
+            animation: fadeIn 0.6s ease;
+        }
+
+        .search-results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .results-count {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .sort-dropdown {
+            min-width: 200px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .no-results-icon {
+            font-size: 4rem;
+            color: #ddd;
+            margin-bottom: 1rem;
+        }
+
+        .pagination-custom {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .pagination-custom a,
+        .pagination-custom span {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #ddd;
+            text-decoration: none;
+            color: #6f42c1;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .pagination-custom a:hover {
+            background: #6f42c1;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .pagination-custom .active {
+            background: linear-gradient(135deg, #6f42c1, #e83e8c);
+            color: white;
+            border-color: #6f42c1;
+        }
+
+        .active-filters {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .filter-tag {
+            background: #e3f2fd;
+            color: #6f42c1;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-tag button {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            padding: 0;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .filter-tag button:hover {
+            color: #e83e8c;
+        }
+
+        .clear-filters {
+            display: inline-block;
+            color: #999;
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .clear-filters:hover {
+            color: #6f42c1;
+        }
+
+        @media (max-width: 768px) {
+            .filters-sidebar {
+                position: static;
+                margin-bottom: 2rem;
+            }
+
+            .search-results-header {
+                flex-direction: column;
+            }
+
+            .results-count {
+                order: 2;
+            }
+
+            .sort-dropdown {
+                order: 1;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold text-gradient" href="../index.html">
+                <i class="fas fa-feather-alt me-2"></i>Dearest Mide
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="search.html">Search</a>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <button class="btn btn-sm btn-outline-primary" id="themeToggle" title="Toggle Dark Mode">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Search Hero Section -->
+    <div class="search-hero">
+        <div class="container">
+            <h1 class="mb-4" data-aos="fade-up">Search & Discover</h1>
+            <form class="search-form" data-aos="fade-up" data-aos-delay="100">
+                <input type="text" class="form-control form-control-lg" id="searchInput" placeholder="Search articles, stories, ideas...">
+                <button type="submit" class="btn btn-light btn-lg fw-bold">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container py-5">
+        <div class="row g-4">
+            <!-- Sidebar Filters -->
+            <div class="col-lg-3">
+                <div class="filters-sidebar" data-aos="fade-right">
+                    <!-- Search by Title -->
+                    <div class="filter-group">
+                        <h6><i class="fas fa-search me-2"></i>Quick Search</h6>
+                        <input type="text" class="form-control form-control-sm" id="filterSearch" placeholder="Search articles...">
+                    </div>
+
+                    <!-- Categories Filter -->
+                    <div class="filter-group">
+                        <h6><i class="fas fa-folder me-2"></i>Categories</h6>
+                        <div class="filter-option">
+                            <input type="checkbox" id="cat-tech" class="form-check-input category-filter">
+                            <label for="cat-tech" class="form-check-label">Technology</label>
+                            <span>(24)</span>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="cat-lifestyle" class="form-check-input category-filter">
+                            <label for="cat-lifestyle" class="form-check-label">Lifestyle</label>
+                            <span>(18)</span>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="cat-travel" class="form-check-input category-filter">
+                            <label for="cat-travel" class="form-check-label">Travel</label>
+                            <span>(21)</span>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="cat-growth" class="form-check-input category-filter">
+                            <label for="cat-growth" class="form-check-label">Personal Growth</label>
+                            <span>(32)</span>
+                        </div>
+                    </div>
+
+                    <!-- Date Range Filter -->
+                    <div class="filter-group">
+                        <h6><i class="fas fa-calendar me-2"></i>Date Range</h6>
+                        <div class="filter-option">
+                            <input type="checkbox" id="date-week" class="form-check-input date-filter">
+                            <label for="date-week" class="form-check-label">Last Week</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="date-month" class="form-check-input date-filter">
+                            <label for="date-month" class="form-check-label">Last Month</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="date-year" class="form-check-input date-filter">
+                            <label for="date-year" class="form-check-label">Last Year</label>
+                        </div>
+                    </div>
+
+                    <!-- Tags Filter -->
+                    <div class="filter-group">
+                        <h6><i class="fas fa-tag me-2"></i>Popular Tags</h6>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <button class="badge bg-light text-dark flex-grow-0" onclick="filterByTag(this)">JavaScript</button>
+                            <button class="badge bg-light text-dark flex-grow-0" onclick="filterByTag(this)">Bootstrap</button>
+                            <button class="badge bg-light text-dark flex-grow-0" onclick="filterByTag(this)">Design</button>
+                            <button class="badge bg-light text-dark flex-grow-0" onclick="filterByTag(this)">React</button>
+                            <button class="badge bg-light text-dark flex-grow-0" onclick="filterByTag(this)">Tutorial</button>
+                        </div>
+                    </div>
+
+                    <!-- Clear Filters -->
+                    <div class="filter-group">
+                        <a href="search.html" class="clear-filters">
+                            <i class="fas fa-times me-1"></i>Clear All Filters
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="col-lg-9">
+                <!-- Active Filters -->
+                <div id="activeFilters" class="active-filters" style="display: none;"></div>
+
+                <!-- Results Header -->
+                <div class="search-results-header" data-aos="fade-up">
+                    <span class="results-count">
+                        Showing <strong id="resultCount">12</strong> results
+                    </span>
+                    <div>
+                        <select class="form-select sort-dropdown" id="sortBy">
+                            <option value="recent">Most Recent</option>
+                            <option value="popular">Most Popular</option>
+                            <option value="views">Most Viewed</option>
+                            <option value="alphabetical">Alphabetical</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Results Grid -->
+                <div class="results-grid">
+                    <div class="row g-4" id="resultsContainer">
+                        <!-- Results will be dynamically inserted here -->
+                    </div>
+                </div>
+
+                <!-- No Results Message -->
+                <div id="noResults" class="no-results" style="display: none;">
+                    <div class="no-results-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h4 class="mb-2">No articles found</h4>
+                    <p class="text-muted mb-3">Try adjusting your search terms or filters</p>
+                    <a href="search.html" class="btn btn-primary">Clear Filters</a>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination-custom" id="pagination"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-light py-5 mt-5">
+        <div class="container">
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <h5 class="fw-bold mb-3">Dearest Mide</h5>
+                    <p class="text-muted">Your space for inspiration, knowledge, and personal growth.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="fw-bold mb-3">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="../index.html" class="text-muted footer-link">Home</a></li>
+                        <li class="mb-2"><a href="search.html" class="text-muted footer-link">All Articles</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted footer-link">About</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="fw-bold mb-3">Categories</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-muted footer-link">Technology</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted footer-link">Lifestyle</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted footer-link">Travel</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="fw-bold mb-3">Social</h5>
+                    <div class="d-flex gap-2">
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-secondary">
+            <p class="text-center text-muted mb-0">&copy; 2024 Dearest Mide. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button type="button" class="btn btn-primary btn-floating" id="backToTop" title="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- AOS JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="../js/app.js"></script>
+    <script>
+        // Initialize AOS
+        AOS.init();
+
+        // Mock articles data
+        const allArticles = [
+            { title: "UI Design Trends That Will Dominate 2024", category: "Design", tags: ["design", "trends"], date: "2024-03-08", views: 1250, image: "https://images.unsplash.com/photo-1516321318423-f06f70d504f0?w=500&h=300&fit=crop" },
+            { title: "Building Scalable Applications with Node.js", category: "Technology", tags: ["nodejs", "backend"], date: "2024-03-07", views: 980, image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=300&fit=crop" },
+            { title: "Complete Guide to React Hooks and State Management", category: "Technology", tags: ["react", "javascript"], date: "2024-03-06", views: 850, image: "https://images.unsplash.com/photo-1626699365915-25cf8e1535b9?w=500&h=300&fit=crop" },
+            { title: "Mindfulness in the Digital Age: Finding Balance", category: "Lifestyle", tags: ["wellness", "mindfulness"], date: "2024-03-05", views: 620, image: "https://images.unsplash.com/photo-1522869635100-ce75fb8cc1ca?w=500&h=300&fit=crop" },
+            { title: "Exploring Hidden Gems: Best Travel Destinations 2024", category: "Travel", tags: ["travel", "adventure"], date: "2024-03-04", views: 1150, image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500&h=300&fit=crop" },
+            { title: "Productivity Hacks: Work Smarter, Not Harder", category: "Personal Growth", tags: ["productivity", "tips"], date: "2024-03-03", views: 920, image: "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=500&h=300&fit=crop" },
+        ];
+
+        let currentPage = 1;
+        const articlesPerPage = 9;
+
+        function renderArticles(articles) {
+            const container = document.getElementById('resultsContainer');
+            const noResults = document.getElementById('noResults');
+
+            if (articles.length === 0) {
+                container.innerHTML = '';
+                noResults.style.display = 'block';
+                document.getElementById('pagination').innerHTML = '';
+                return;
+            }
+
+            noResults.style.display = 'none';
+
+            const start = (currentPage - 1) * articlesPerPage;
+            const end = start + articlesPerPage;
+            const paginatedArticles = articles.slice(start, end);
+
+            container.innerHTML = paginatedArticles.map((article, index) => `
+                <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="${index * 100}">
+                    <article class="post-card h-100 overflow-hidden">
+                        <div class="post-image-wrapper position-relative">
+                            <img src="${article.image}" class="img-fluid post-image" alt="${article.title}">
+                            <div class="overlay-gradient-post"></div>
+                            <span class="badge bg-info position-absolute top-3 end-3">${article.category}</span>
+                        </div>
+                        <div class="post-body p-4">
+                            <h5 class="post-title fw-bold mb-2">${article.title}</h5>
+                            <div class="post-meta mb-2">
+                                <small class="text-muted"><i class="fas fa-calendar me-1"></i>${article.date}</small>
+                                <small class="text-muted ms-3"><i class="fas fa-eye me-1"></i>${article.views} views</small>
+                            </div>
+                            <div class="d-flex gap-2 flex-wrap mb-3">
+                                ${article.tags.map(tag => `<span class="badge bg-light text-dark">${tag}</span>`).join('')}
+                            </div>
+                            <a href="post-detail.html" class="btn-link-arrow">Read More <i class="fas fa-arrow-right ms-1"></i></a>
+                        </div>
+                    </article>
+                </div>
+            `).join('');
+
+            document.getElementById('resultCount').textContent = articles.length;
+            renderPagination(articles);
+            AOS.refresh();
+        }
+
+        function renderPagination(articles) {
+            const totalPages = Math.ceil(articles.length / articlesPerPage);
+            const pagination = document.getElementById('pagination');
+
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+
+            let paginationHTML = '';
+
+            if (currentPage > 1) {
+                paginationHTML += `<a onclick="goToPage(${currentPage - 1})"><i class="fas fa-chevron-left"></i></a>`;
+            }
+
+            for (let i = 1; i <= totalPages; i++) {
+                paginationHTML += `<a onclick="goToPage(${i})" ${i === currentPage ? 'class="active"' : ''}>${i}</a>`;
+            }
+
+            if (currentPage < totalPages) {
+                paginationHTML += `<a onclick="goToPage(${currentPage + 1})"><i class="fas fa-chevron-right"></i></a>`;
+            }
+
+            pagination.innerHTML = paginationHTML;
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            renderArticles(getFilteredArticles());
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getFilteredArticles() {
+            let filtered = allArticles;
+
+            // Search filter
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            const filterSearch = document.getElementById('filterSearch').value.toLowerCase();
+            const query = searchQuery || filterSearch;
+
+            if (query) {
+                filtered = filtered.filter(article =>
+                    article.title.toLowerCase().includes(query) ||
+                    article.tags.some(tag => tag.toLowerCase().includes(query))
+                );
+            }
+
+            // Category filter
+            const selectedCategories = Array.from(document.querySelectorAll('.category-filter:checked')).map(cb => cb.id.replace('cat-', '').charAt(0).toUpperCase() + cb.id.replace('cat-', '').slice(1));
+            if (selectedCategories.length > 0) {
+                filtered = filtered.filter(article => selectedCategories.some(cat => article.category.includes(cat)));
+            }
+
+            return filtered;
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('keyup', () => {
+            currentPage = 1;
+            renderArticles(getFilteredArticles());
+        });
+
+        document.getElementById('filterSearch').addEventListener('keyup', () => {
+            currentPage = 1;
+            renderArticles(getFilteredArticles());
+        });
+
+        document.querySelectorAll('.category-filter').forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                currentPage = 1;
+                renderArticles(getFilteredArticles());
+            });
+        });
+
+        document.getElementById('sortBy').addEventListener('change', (e) => {
+            let sorted = getFilteredArticles();
+            if (e.target.value === 'popular') {
+                sorted.sort((a, b) => b.views - a.views);
+            } else if (e.target.value === 'alphabetical') {
+                sorted.sort((a, b) => a.title.localeCompare(b.title));
+            }
+            currentPage = 1;
+            renderArticles(sorted);
+        });
+
+        function filterByTag(element) {
+            const tag = element.textContent.trim();
+            document.getElementById('filterSearch').value = tag;
+            currentPage = 1;
+            renderArticles(getFilteredArticles());
+        }
+
+        // Initial render
+        renderArticles(allArticles);
+    </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "name": "dearest-mide-user-app",
+  "version": "1.0.0",
+  "description": "User-facing blog application for Dearest Mide - A modern blog platform with responsive design and engaging UI",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "python -m http.server 8000",
+    "build": "echo 'This is a static site. No build needed.'",
+    "preview": "python -m http.server 8000"
+  },
+  "keywords": [
+    "blog",
+    "bootstrap",
+    "responsive",
+    "user-app",
+    "dearest-mide"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": [],
+  "devDependencies": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/giftokizz-tech/dearest-mide.git"
+  },
+  "bugs": {
+    "url": "https://github.com/giftokizz-tech/dearest-mide/issues"
+  },
+  "homepage": "https://github.com/giftokizz-tech/dearest-mide#readme"
+}
