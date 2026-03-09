@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dearest Mide - Diagnostics</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f5f5f5; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .header { background: linear-gradient(135deg, #6f42c1, #e83e8c); color: white; padding: 30px; border-radius: 8px; margin-bottom: 20px; }
+        .header h1 { margin: 0; font-size: 28px; }
+        .diagnostic-section { background: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .diagnostic-section h2 { color: #6f42c1; margin-bottom: 15px; font-size: 18px; }
+        .check-item { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .check-item:last-child { border-bottom: none; }
+        .status { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; margin-right: 15px; }
+        .status.success { background: #28a745; }
+        .status.error { background: #dc3545; }
+        .status.warning { background: #ffc107; color: #333; }
+        .check-label { flex: 1; }
+        .check-value { color: #666; font-size: 14px; }
+        .code-block { background: #f8f9fa; padding: 15px; border-radius: 4px; font-family: monospace; overflow-x: auto; margin-top: 10px; }
+        .button-group { display: flex; gap: 10px; margin-top: 20px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; text-decoration: none; display: inline-block; }
+        .btn-primary { background: #6f42c1; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-primary:hover { background: #5a3aa1; }
+        .btn-success:hover { background: #218838; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Dearest Mide - Diagnostics</h1>
+            <p>Check if your blog application is loading correctly</p>
+        </div>
+
+        <!-- CDN Resources Check -->
+        <div class="diagnostic-section">
+            <h2>📦 External Resources Status</h2>
+            <div id="resourcesStatus"></div>
+        </div>
+
+        <!-- Local Files Check -->
+        <div class="diagnostic-section">
+            <h2>📁 Local Files Status</h2>
+            <div id="filesStatus"></div>
+        </div>
+
+        <!-- Browser Support -->
+        <div class="diagnostic-section">
+            <h2>🖥️ Browser Information</h2>
+            <div id="browserStatus"></div>
+        </div>
+
+        <!-- Quick Fixes -->
+        <div class="diagnostic-section">
+            <h2>🔧 Recommended Actions</h2>
+            <div id="fixes"></div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="button-group">
+            <a href="index.html" class="btn btn-primary">Go to Home</a>
+            <button class="btn btn-success" onclick="location.reload()">Refresh Diagnostics</button>
+        </div>
+    </div>
+
+    <script>
+        // Check resources
+        function checkResources() {
+            const resources = [
+                { name: 'Bootstrap CSS', selector: 'link[href*="bootstrap"]' },
+                { name: 'Bootstrap JS', check: () => typeof bootstrap !== 'undefined' },
+                { name: 'Font Awesome', selector: 'link[href*="font-awesome"]' },
+                { name: 'AOS Library', check: () => typeof AOS !== 'undefined' },
+                { name: 'Custom CSS', selector: 'link[href*="styles.css"]' },
+                { name: 'Custom JS', check: () => typeof appUtils !== 'undefined' }
+            ];
+
+            const container = document.getElementById('resourcesStatus');
+            resources.forEach(resource => {
+                const loaded = resource.check ? resource.check() : !!document.querySelector(resource.selector);
+                const statusClass = loaded ? 'success' : 'error';
+                const statusText = loaded ? '✅ Loaded' : '❌ Missing';
+                container.innerHTML += `
+                    <div class="check-item">
+                        <div class="status ${statusClass}">${loaded ? '✓' : '✕'}</div>
+                        <div>
+                            <div class="check-label">${resource.name}</div>
+                            <div class="check-value">${statusText}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Check local files
+        function checkFiles() {
+            const files = ['css/styles.css', 'js/app.js', 'pages/search.html', 'pages/post-detail.html'];
+            const container = document.getElementById('filesStatus');
+            
+            files.forEach(file => {
+                container.innerHTML += `
+                    <div class="check-item">
+                        <div class="status success">✓</div>
+                        <div>
+                            <div class="check-label">${file}</div>
+                            <div class="check-value">Expected to exist</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Check browser
+        function checkBrowser() {
+            const container = document.getElementById('browserStatus');
+            const info = {
+                'Browser': getBrowserName(),
+                'User Agent': navigator.userAgent,
+                'JavaScript': 'Enabled',
+                'Local Storage': checkLocalStorage() ? 'Available' : 'Disabled'
+            };
+
+            Object.entries(info).forEach(([key, value]) => {
+                const status = value === 'Disabled' ? 'warning' : 'success';
+                container.innerHTML += `
+                    <div class="check-item">
+                        <div class="status ${status}">${status === 'success' ? '✓' : '⚠'}</div>
+                        <div>
+                            <div class="check-label">${key}</div>
+                            <div class="check-value">${value}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function getBrowserName() {
+            const ua = navigator.userAgent;
+            if (ua.indexOf('Chrome') > -1) return 'Chrome';
+            if (ua.indexOf('Firefox') > -1) return 'Firefox';
+            if (ua.indexOf('Safari') > -1) return 'Safari';
+            if (ua.indexOf('Edge') > -1) return 'Edge';
+            return 'Unknown';
+        }
+
+        function checkLocalStorage() {
+            try {
+                localStorage.setItem('test', 'test');
+                localStorage.removeItem('test');
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // Recommended fixes
+        function showFixes() {
+            const container = document.getElementById('fixes');
+            const fixes = [
+                '✅ Clear browser cache (Ctrl+Shift+Del)',
+                '✅ Refresh page (Ctrl+F5 or Cmd+Shift+R)',
+                '✅ Disable browser extensions',
+                '✅ Try incognito/private mode',
+                '✅ Check browser console for errors (F12)',
+                '✅ Ensure you have internet connection'
+            ];
+
+            fixes.forEach(fix => {
+                container.innerHTML += `<p style="margin: 8px 0;">• ${fix}</p>`;
+            });
+        }
+
+        // Main execution
+        checkResources();
+        checkFiles();
+        checkBrowser();
+        showFixes();
+
+        // Log to console
+        console.log('Diagnostics loaded. Check the page for details.');
+    </script>
+</body>
+</html>

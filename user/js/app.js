@@ -465,5 +465,22 @@ window.appUtils = {
     API
 };
 
+// Debug information
 console.log('✨ Dearest Mide Blog App Initialized');
 console.log('Available utilities:', window.appUtils);
+
+// Resource loading diagnostics
+console.log('📊 Resource Status:');
+console.log('  Bootstrap:', typeof bootstrap !== 'undefined' ? '✅ Loaded' : '❌ Missing');
+console.log('  Font Awesome:', document.querySelector('link[href*="font-awesome"]') ? '✅ Loaded' : '❌ Missing');
+console.log('  AOS:', typeof AOS !== 'undefined' ? '✅ Loaded' : '❌ Missing');
+console.log('  Custom CSS:', document.querySelector('link[href*="styles.css"]') ? '✅ Loaded' : '❌ Missing');
+
+// Check if page elements are visible
+window.addEventListener('load', function() {
+    const pageContent = document.querySelector('.featured-section');
+    console.log('Page content visible:', pageContent ? '✅ Yes' : '❌ No');
+    
+    const postsGrid = document.getElementById('postsGrid');
+    console.log('Posts grid found:', postsGrid ? '✅ Yes' : '❌ No');
+});
