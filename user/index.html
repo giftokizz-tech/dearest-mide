@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dearest Mide - Blog Platform</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AOS (Animate On Scroll) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top shadow-sm navbar-animate">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-gradient" href="index.html">
+                <i class="fas fa-feather-alt me-2"></i>Dearest Mide
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#categories">Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pages/search.html">Search</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <button class="btn btn-sm btn-outline-primary" id="themeToggle" title="Toggle Dark Mode">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section text-white text-center py-5 mb-5">
+        <div class="container">
+            <div class="row align-items-center min-vh-50">
+                <div class="col-lg-8 mx-auto" data-aos="fade-up" data-aos-duration="800">
+                    <h1 class="display-3 fw-bold mb-4 hero-title">Welcome to Dearest Mide</h1>
+                    <p class="lead mb-4 hero-subtitle">Discover inspiring stories, insightful articles, and creative thoughts from our community of writers.</p>
+                    <div class="input-group input-group-lg mb-4 search-input-container" data-aos="fade-up" data-aos-delay="100" data-aos-duration="800">
+                        <input type="text" class="form-control search-input" placeholder="Search articles, stories, ideas..." id="heroSearch">
+                        <button class="btn btn-primary" type="button" id="heroSearchBtn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="badge-group" data-aos="fade-up" data-aos-delay="200" data-aos-duration="800">
+                        <span class="badge bg-info me-2 mb-2">Technology</span>
+                        <span class="badge bg-success me-2 mb-2">Lifestyle</span>
+                        <span class="badge bg-warning text-dark me-2 mb-2">Travel</span>
+                        <span class="badge bg-danger mb-2">Personal Growth</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Posts Section -->
+    <section class="featured-section py-5 mb-5">
+        <div class="container">
+            <h2 class="section-title text-center mb-5" data-aos="fade-up">Featured Articles</h2>
+            
+            <div class="row g-4 mb-5">
+                <!-- Featured Post 1 -->
+                <div class="col-lg-6" data-aos="fade-right" data-aos-duration="800">
+                    <div class="featured-card overflow-hidden">
+                        <div class="featured-image-wrapper">
+                            <img src="https://images.unsplash.com/photo-1633356122544-f134324ef6db?w=800&h=400&fit=crop" class="img-fluid featured-image" alt="Featured Post 1">
+                            <div class="overlay-gradient"></div>
+                            <span class="badge bg-primary position-absolute top-3 start-3">Featured</span>
+                        </div>
+                        <div class="featured-content p-4">
+                            <h3 class="fw-bold mb-2">The Future of Web Development in 2024</h3>
+                            <p class="text-muted mb-3">Explore the latest trends and technologies shaping the web development landscape...</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="author-info">
+                                    <img src="https://i.pravatar.cc/40?img=1" class="rounded-circle me-2" alt="Author">
+                                    <small class="text-muted">By John Developer</small>
+                                </div>
+                                <a href="pages/post-detail.html" class="btn btn-primary btn-sm read-more-btn">Read More <i class="fas fa-arrow-right ms-2"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Featured Post 2 -->
+                <div class="col-lg-6" data-aos="fade-left" data-aos-duration="800">
+                    <div class="featured-card overflow-hidden">
+                        <div class="featured-image-wrapper">
+                            <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=400&fit=crop" class="img-fluid featured-image" alt="Featured Post 2">
+                            <div class="overlay-gradient"></div>
+                            <span class="badge bg-primary position-absolute top-3 start-3">Featured</span>
+                        </div>
+                        <div class="featured-content p-4">
+                            <h3 class="fw-bold mb-2">Mastering Bootstrap: From Basics to Advanced</h3>
+                            <p class="text-muted mb-3">A comprehensive guide to building responsive web applications with Bootstrap 5...</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="author-info">
+                                    <img src="https://i.pravatar.cc/40?img=2" class="rounded-circle me-2" alt="Author">
+                                    <small class="text-muted">By Sarah Designer</small>
+                                </div>
+                                <a href="pages/post-detail.html" class="btn btn-primary btn-sm read-more-btn">Read More <i class="fas fa-arrow-right ms-2"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section id="categories" class="categories-section py-5 mb-5 bg-light">
+        <div class="container">
+            <h2 class="section-title text-center mb-5" data-aos="fade-up">Explore by Category</h2>
+            
+            <div class="row g-4">
+                <!-- Category Card 1 -->
+                <div class="col-md-6 col-lg-3" data-aos="flip-left" data-aos-duration="800">
+                    <div class="category-card text-center p-4 rounded-3">
+                        <div class="category-icon mb-3">
+                            <i class="fas fa-laptop-code fa-3x text-primary"></i>
+                        </div>
+                        <h4 class="fw-bold mb-2">Technology</h4>
+                        <p class="text-muted mb-3">24 Articles</p>
+                        <a href="pages/search.html?category=technology" class="stretched-link"></a>
+                    </div>
+                </div>
+
+                <!-- Category Card 2 -->
+                <div class="col-md-6 col-lg-3" data-aos="flip-left" data-aos-duration="800" data-aos-delay="100">
+                    <div class="category-card text-center p-4 rounded-3">
+                        <div class="category-icon mb-3">
+                            <i class="fas fa-heart fa-3x text-danger"></i>
+                        </div>
+                        <h4 class="fw-bold mb-2">Lifestyle</h4>
+                        <p class="text-muted mb-3">18 Articles</p>
+                        <a href="pages/search.html?category=lifestyle" class="stretched-link"></a>
+                    </div>
+                </div>
+
+                <!-- Category Card 3 -->
+                <div class="col-md-6 col-lg-3" data-aos="flip-left" data-aos-duration="800" data-aos-delay="200">
+                    <div class="category-card text-center p-4 rounded-3">
+                        <div class="category-icon mb-3">
+                            <i class="fas fa-globe fa-3x text-success"></i>
+                        </div>
+                        <h4 class="fw-bold mb-2">Travel</h4>
+                        <p class="text-muted mb-3">21 Articles</p>
+                        <a href="pages/search.html?category=travel" class="stretched-link"></a>
+                    </div>
+                </div>
+
+                <!-- Category Card 4 -->
+                <div class="col-md-6 col-lg-3" data-aos="flip-left" data-aos-duration="800" data-aos-delay="300">
+                    <div class="category-card text-center p-4 rounded-3">
+                        <div class="category-icon mb-3">
+                            <i class="fas fa-book-open fa-3x text-warning"></i>
+                        </div>
+                        <h4 class="fw-bold mb-2">Personal Growth</h4>
+                        <p class="text-muted mb-3">32 Articles</p>
+                        <a href="pages/search.html?category=growth" class="stretched-link"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest Posts Grid -->
+    <section class="latest-posts-section py-5 mb-5">
+        <div class="container">
+            <h2 class="section-title text-center mb-5" data-aos="fade-up">Latest Articles</h2>
+            
+            <div class="row g-4" id="postsGrid">
+                <!-- Post Card 1 -->
+                <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-duration="600">
+                    <article class="post-card h-100 overflow-hidden rounded-3 shadow-sm hover-shadow">
+                        <div class="post-image-wrapper position-relative">
+                            <img src="https://images.unsplash.com/photo-1516321318423-f06f70d504f0?w=500&h=300&fit=crop" class="img-fluid post-image" alt="Post">
+                            <div class="overlay-gradient-post"></div>
+                            <span class="badge bg-info position-absolute top-3 end-3">Design</span>
+                        </div>
+                        <div class="post-body p-4">
+                            <div class="post-meta mb-2">
+                                <small class="text-muted"><i class="far fa-calendar me-1"></i>Mar 8, 2024</small>
+                                <small class="text-muted ms-3"><i class="far fa-clock me-1"></i>5 min read</small>
+                            </div>
+                            <h5 class="post-title fw-bold mb-2">UI Design Trends That Will Dominate 2024</h5>
+                            <p class="post-excerpt text-muted mb-3">Discover the latest design trends that are reshaping the digital landscape...</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="author-avatar">
+                                    <img src="https://i.pravatar.cc/32?img=3" class="rounded-circle" alt="Author">
+                                </div>
+                                <a href="pages/post-detail.html" class="btn-link-arrow">Continue Reading <i class="fas fa-arrow-right ms-1"></i></a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <!-- Post Card 2 -->
+                <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="100">
+                    <article class="post-card h-100 overflow-hidden rounded-3 shadow-sm hover-shadow">
+                        <div class="post-image-wrapper position-relative">
+                            <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=300&fit=crop" class="img-fluid post-image" alt="Post">
+                            <div class="overlay-gradient-post"></div>
+                            <span class="badge bg-success position-absolute top-3 end-3">Development</span>
+                        </div>
+                        <div class="post-body p-4">
+                            <div class="post-meta mb-2">
+                                <small class="text-muted"><i class="far fa-calendar me-1"></i>Mar 7, 2024</small>
+                                <small class="text-muted ms-3"><i class="far fa-clock me-1"></i>8 min read</small>
+                            </div>
+                            <h5 class="post-title fw-bold mb-2">Building Scalable Applications with Node.js</h5>
+                            <p class="post-excerpt text-muted mb-3">Learn best practices for creating high-performance backend systems...</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="author-avatar">
+                                    <img src="https://i.pravatar.cc/32?img=4" class="rounded-circle" alt="Author">
+                                </div>
+                                <a href="pages/post-detail.html" class="btn-link-arrow">Continue Reading <i class="fas fa-arrow-right ms-1"></i></a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <!-- Post Card 3 -->
+                <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="200">
+                    <article class="post-card h-100 overflow-hidden rounded-3 shadow-sm hover-shadow">
+                        <div class="post-image-wrapper position-relative">
+                            <img src="https://images.unsplash.com/photo-1626699365915-25cf8e1535b9?w=500&h=300&fit=crop" class="img-fluid post-image" alt="Post">
+                            <div class="overlay-gradient-post"></div>
+                            <span class="badge bg-warning text-dark position-absolute top-3 end-3">Tutorial</span>
+                        </div>
+                        <div class="post-body p-4">
+                            <div class="post-meta mb-2">
+                                <small class="text-muted"><i class="far fa-calendar me-1"></i>Mar 6, 2024</small>
+                                <small class="text-muted ms-3"><i class="far fa-clock me-1"></i>10 min read</small>
+                            </div>
+                            <h5 class="post-title fw-bold mb-2">Complete Guide to React Hooks and State Management</h5>
+                            <p class="post-excerpt text-muted mb-3">Master React hooks and learn advanced state management patterns...</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="author-avatar">
+                                    <img src="https://i.pravatar.cc/32?img=5" class="rounded-circle" alt="Author">
+                                </div>
+                                <a href="pages/post-detail.html" class="btn-link-arrow">Continue Reading <i class="fas fa-arrow-right ms-1"></i></a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <!-- Post Card 4 -->
+                <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="300">
+                    <article class="post-card h-100 overflow-hidden rounded-3 shadow-sm hover-shadow">
+                        <div class="post-image-wrapper position-relative">
+                            <img src="https://images.unsplash.com/photo-1522869635100-ce75fb8cc1ca?w=500&h=300&fit=crop" class="img-fluid post-image" alt="Post">
+                            <div class="overlay-gradient-post"></div>
+                            <span class="badge bg-danger position-absolute top-3 end-3">Wellness</span>
+                        </div>
+                        <div class="post-body p-4">
+                            <div class="post-meta mb-2">
+                                <small class="text-muted"><i class="far fa-calendar me-1"></i>Mar 5, 2024</small>
+                                <small class="text-muted ms-3"><i class="far fa-clock me-1"></i>6 min read</small>
+                            </div>
+                            <h5 class="post-title fw-bold mb-2">Mindfulness in the Digital Age: Finding Balance</h5>
+                            <p class="post-excerpt text-muted mb-3">Discover techniques and practices for maintaining mental health online...</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="author-avatar">
+                                    <img src="https://i.pravatar.cc/32?img=6" class="rounded-circle" alt="Author">
+                                </div>
+                                <a href="pages/post-detail.html" class="btn-link-arrow">Continue Reading <i class="fas fa-arrow-right ms-1"></i></a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <!-- Post Card 5 -->
+                <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="400">
+                    <article class="post-card h-100 overflow-hidden rounded-3 shadow-sm hover-shadow">
+                        <div class="post-image-wrapper position-relative">
+                            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500&h=300&fit=crop" class="img-fluid post-image" alt="Post">
+                            <div class="overlay-gradient-post"></div>
+                            <span class="badge bg-secondary position-absolute top-3 end-3">Adventure</span>
+                        </div>
+                        <div class="post-body p-4">
+                            <div class="post-meta mb-2">
+                                <small class="text-muted"><i class="far fa-calendar me-1"></i>Mar 4, 2024</small>
+                                <small class="text-muted ms-3"><i class="far fa-clock me-1"></i>7 min read</small>
+                            </div>
+                            <h5 class="post-title fw-bold mb-2">Exploring Hidden Gems: Best Travel Destinations 2024</h5>
+                            <p class="post-excerpt text-muted mb-3">Uncover unique and authentic travel experiences around the world...</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="author-avatar">
+                                    <img src="https://i.pravatar.cc/32?img=7" class="rounded-circle" alt="Author">
+                                </div>
+                                <a href="pages/post-detail.html" class="btn-link-arrow">Continue Reading <i class="fas fa-arrow-right ms-1"></i></a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <!-- Post Card 6 -->
+                <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="500">
+                    <article class="post-card h-100 overflow-hidden rounded-3 shadow-sm hover-shadow">
+                        <div class="post-image-wrapper position-relative">
+                            <img src="https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=500&h=300&fit=crop" class="img-fluid post-image" alt="Post">
+                            <div class="overlay-gradient-post"></div>
+                            <span class="badge bg-primary position-absolute top-3 end-3">Productivity</span>
+                        </div>
+                        <div class="post-body p-4">
+                            <div class="post-meta mb-2">
+                                <small class="text-muted"><i class="far fa-calendar me-1"></i>Mar 3, 2024</small>
+                                <small class="text-muted ms-3"><i class="far fa-clock me-1"></i>9 min read</small>
+                            </div>
+                            <h5 class="post-title fw-bold mb-2">Productivity Hacks: Work Smarter, Not Harder</h5>
+                            <p class="post-excerpt text-muted mb-3">Proven strategies to boost your productivity and achieve your goals...</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="author-avatar">
+                                    <img src="https://i.pravatar.cc/32?img=8" class="rounded-circle" alt="Author">
+                                </div>
+                                <a href="pages/post-detail.html" class="btn-link-arrow">Continue Reading <i class="fas fa-arrow-right ms-1"></i></a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            <!-- View All Button -->
+            <div class="text-center mt-5" data-aos="fade-up">
+                <a href="pages/search.html" class="btn btn-primary btn-lg btn-load-more">
+                    Load More Articles <i class="fas fa-arrow-down ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section py-5 bg-gradient">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
+                    <h3 class="fw-bold text-white mb-3">Stay Updated</h3>
+                    <p class="text-light mb-0">Subscribe to our newsletter and get the latest articles delivered to your inbox.</p>
+                </div>
+                <div class="col-lg-6" data-aos="fade-left">
+                    <form class="d-flex gap-2" id="newsletterForm">
+                        <input type="email" class="form-control form-control-lg newsletter-input" placeholder="Enter your email" required>
+                        <button type="submit" class="btn btn-light btn-lg fw-bold">Subscribe</button>
+                    </form>
+                    <small class="text-light mt-2 d-block">We respect your privacy. Unsubscribe at any time.</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-light py-5">
+        <div class="container">
+            <div class="row g-4 mb-4">
+                <div class="col-md-3" data-aos="fade-up">
+                    <h5 class="fw-bold mb-3">Dearest Mide</h5>
+                    <p class="text-muted">Your space for inspiration, knowledge, and personal growth through engaging stories and insights.</p>
+                    <div class="social-links">
+                        <a href="#" class="text-light me-3 social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-light me-3 social-icon"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-light me-3 social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-light social-icon"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+
+                <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+                    <h5 class="fw-bold mb-3">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="index.html" class="text-muted footer-link">Home</a></li>
+                        <li class="mb-2"><a href="pages/search.html" class="text-muted footer-link">All Articles</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted footer-link">About Us</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted footer-link">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+                    <h5 class="fw-bold mb-3">Categories</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="pages/search.html?category=technology" class="text-muted footer-link">Technology</a></li>
+                        <li class="mb-2"><a href="pages/search.html?category=lifestyle" class="text-muted footer-link">Lifestyle</a></li>
+                        <li class="mb-2"><a href="pages/search.html?category=travel" class="text-muted footer-link">Travel</a></li>
+                        <li class="mb-2"><a href="pages/search.html?category=growth" class="text-muted footer-link">Growth</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+                    <h5 class="fw-bold mb-3">Legal</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-muted footer-link">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted footer-link">Terms of Service</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted footer-link">Sitemap</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted footer-link">RSS Feed</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <hr class="bg-secondary">
+
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="text-muted mb-0">&copy; 2024 Dearest Mide. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="text-muted mb-0">Made with <i class="fas fa-heart text-danger"></i> by <a href="#" class="text-light">The Dearest Mide Team</a></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button type="button" class="btn btn-primary btn-floating" id="backToTop" title="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- AOS JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="js/app.js"></script>
+</body>
+</html>
