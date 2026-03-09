@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Dearest Mide - Blog Platform
 
 A modern blog platform with separate admin and user interfaces. The admin dashboard allows bloggers to create, edit, and manage content, while the user site provides a clean reading experience for blog visitors.
@@ -220,3 +221,15 @@ For questions or issues, please open an issue on GitHub or contact the maintaine
 ---
 
 **Happy Blogging! ✨**
+=======
+# dearest-mide
+
+This repository contains the code for a blog platform with **separate codebases for the admin dashboard and the public blog site** so different developers can work independently.
+
+## Structure
+
+- `admin/` – Bootstrap-powered admin dashboard (post creation/editing, publishing, categories/tags, drafts/scheduling, analytics, users/permissions, SEO tools, media, comments).
+- `blog/` – Bootstrap-powered public-facing blog website (home page, article listing, etc.).
+
+To preview locally, open `admin/index.html` for the dashboard and `blog/index.html` for the main blog in your browser.
+>>>>>>> a2516fd9cb85cab7938c59ebd980eef8e814c89e
