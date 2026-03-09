@@ -26,6 +26,7 @@
       color: #9ca3af;
       border-radius: 0.375rem;
       margin-bottom: 0.25rem;
+      text-align: left;
     }
     .sidebar .nav-link.active,
     .sidebar .nav-link:hover {
@@ -38,6 +39,102 @@
     .content-header {
       border-bottom: 1px solid #e5e7eb;
     }
+    .card {
+      border: none;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+      border-radius: 0.75rem;
+    }
+    .badge-status-draft {
+      background-color: #e5e7eb;
+      color: #374151;
+    }
+    .badge-status-published {
+      background-color: #16a34a;
+    }
+    .badge-status-scheduled {
+      background-color: #f59e0b;
+    }
+    .table thead th {
+      border-bottom-width: 1px;
+      color: #6b7280;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .table > :not(caption) > * > * {
+      vertical-align: middle;
+    }
+    .chart-placeholder {
+      height: 220px;
+      background: repeating-linear-gradient(
+        -45deg,
+        #e5e7eb,
+        #e5e7eb 10px,
+        #f9fafb 10px,
+        #f9fafb 20px
+      );
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6b7280;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-align: center;
+      padding: 0 1rem;
+    }
+    .media-thumb {
+      width: 52px;
+      height: 52px;
+      border-radius: 0.5rem;
+      object-fit: cover;
+    }
+    .seo-score-badge {
+      border-radius: 999px;
+      padding: 0.25rem 0.75rem;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+    .seo-score-good {
+      background-color: rgba(22, 163, 74, 0.08);
+      color: #16a34a;
+    }
+    .comment-item {
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .comment-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    .avatar-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      background-color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: #4b5563;
+      font-size: 0.9rem;
+    }
+    .stat-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #6b7280;
+    }
+    .stat-value {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #111827;
+    }
+    .dashboard-section.d-none {
+      display: none !important;
+    }
   </style>
 </head>
 <body>
@@ -48,33 +145,50 @@
         <div class="d-flex align-items-center mb-4">
           <span class="navbar-brand fw-bold">Blog Admin</span>
         </div>
-        <ul class="nav nav-pills flex-column" id="sidebarNav">
+
+        <!-- Mobile section selector -->
+        <div class="d-md-none mb-3">
+          <select id="mobileSectionSelect" class="form-select">
+            <option value="section-overview">Overview</option>
+            <option value="section-posts">Posts</option>
+            <option value="section-categories">Categories & Tags</option>
+            <option value="section-scheduling">Drafts & Scheduling</option>
+            <option value="section-analytics">Analytics</option>
+            <option value="section-users">Users & Permissions</option>
+            <option value="section-seo">SEO Tools</option>
+            <option value="section-media">Media Library</option>
+            <option value="section-comments">Comments</option>
+          </select>
+        </div>
+
+        <!-- Desktop nav -->
+        <ul class="nav nav-pills flex-column d-none d-md-flex" id="sidebarNav">
           <li class="nav-item">
-            <a href="#" class="nav-link active">Overview</a>
+            <button class="nav-link active" data-target="section-overview">Overview</button>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">Posts</a>
+            <button class="nav-link" data-target="section-posts">Posts</button>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">Categories &amp; Tags</a>
+            <button class="nav-link" data-target="section-categories">Categories & Tags</button>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">Drafts &amp; Scheduling</a>
+            <button class="nav-link" data-target="section-scheduling">Drafts & Scheduling</button>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">Analytics</a>
+            <button class="nav-link" data-target="section-analytics">Analytics</button>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">Users &amp; Permissions</a>
+            <button class="nav-link" data-target="section-users">Users & Permissions</button>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">SEO Tools</a>
+            <button class="nav-link" data-target="section-seo">SEO Tools</button>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">Media Library</a>
+            <button class="nav-link" data-target="section-media">Media Library</button>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">Comments</a>
+            <button class="nav-link" data-target="section-comments">Comments</button>
           </li>
         </ul>
       </nav>
@@ -83,12 +197,12 @@
       <main class="col px-0">
         <header class="content-header bg-white px-3 px-md-4 py-3 d-flex justify-content-between align-items-center">
           <div>
-            <h1 class="h5 mb-1">Admin Dashboard</h1>
+            <h1 class="h5 mb-1" id="sectionTitle">Overview</h1>
             <p class="text-muted mb-0 small">
-              Skeleton layout for the blog admin panel. Hook your features here.
+              Manage your posts, audience and site health from a single dashboard.
             </p>
           </div>
-          <div class="d-flex gap-2">
+          <div class="d-none d-md-flex gap-2">
             <button class="btn btn-outline-secondary btn-sm">Preview Blog</button>
             <button class="btn btn-primary btn-sm">
               <span class="me-1">+</span> New Post
@@ -97,93 +211,1412 @@
         </header>
 
         <div class="p-3 p-md-4">
-          <div class="row g-3">
-            <div class="col-12 col-md-4">
-              <div class="card h-100">
-                <div class="card-body">
-                  <h2 class="h6 mb-2">Posts</h2>
-                  <p class="text-muted small mb-3">
-                    Creation, editing, publishing/unpublishing of blog posts.
-                  </p>
-                  <button class="btn btn-sm btn-outline-primary">Go to Posts</button>
+          <!-- Overview -->
+          <section id="section-overview" class="dashboard-section">
+            <div class="row g-3 mb-3">
+              <div class="col-12 col-md-3">
+                <div class="card h-100">
+                  <div class="card-body">
+                    <div class="stat-label mb-1">Total Posts</div>
+                    <div class="stat-value mb-1">128</div>
+                    <div class="text-success small fw-semibold">+12 this month</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-md-3">
+                <div class="card h-100">
+                  <div class="card-body">
+                    <div class="stat-label mb-1">Published</div>
+                    <div class="stat-value mb-1">96</div>
+                    <div class="small text-muted">24 drafts · 8 scheduled</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-md-3">
+                <div class="card h-100">
+                  <div class="card-body">
+                    <div class="stat-label mb-1">Monthly Views</div>
+                    <div class="stat-value mb-1">42.4k</div>
+                    <div class="text-success small fw-semibold">+18% vs last month</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-md-3">
+                <div class="card h-100">
+                  <div class="card-body">
+                    <div class="stat-label mb-1">Pending Comments</div>
+                    <div class="stat-value mb-1">34</div>
+                    <div class="small text-muted">Need moderation</div>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="col-12 col-md-4">
-              <div class="card h-100">
-                <div class="card-body">
-                  <h2 class="h6 mb-2">Categories &amp; Tags</h2>
-                  <p class="text-muted small mb-3">
-                    Organise posts into categories and tags for easier navigation and SEO.
-                  </p>
-                  <button class="btn btn-sm btn-outline-primary">Manage Taxonomy</button>
-                </div>
-              </div>
-            </div>
-            <div class="col-12 col-md-4">
-              <div class="card h-100">
-                <div class="card-body">
-                  <h2 class="h6 mb-2">Drafts &amp; Scheduling</h2>
-                  <p class="text-muted small mb-3">
-                    Draft posts, schedule publication and manage editorial calendar.
-                  </p>
-                  <button class="btn btn-sm btn-outline-primary">Open Scheduler</button>
-                </div>
-              </div>
-            </div>
-          </div>
 
-          <div class="row g-3 mt-1">
-            <div class="col-12 col-md-4">
-              <div class="card h-100">
-                <div class="card-body">
-                  <h2 class="h6 mb-2">Analytics</h2>
-                  <p class="text-muted small mb-3">
-                    Track post performance, traffic and engagement metrics.
-                  </p>
-                  <button class="btn btn-sm btn-outline-primary">View Analytics</button>
+            <div class="row g-3">
+              <div class="col-12 col-lg-8">
+                <div class="card mb-3">
+                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h2 class="h6 mb-0">Recent Posts</h2>
+                    <button class="btn btn-sm btn-outline-secondary">View all</button>
+                  </div>
+                  <div class="card-body p-0">
+                    <div class="table-responsive">
+                      <table class="table mb-0 align-middle">
+                        <thead>
+                          <tr>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Category</th>
+                            <th>Views</th>
+                            <th>Updated</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <div class="fw-semibold">Designing a Calm Productivity System</div>
+                              <div class="small text-muted">Slug: calm-productivity-system</div>
+                            </td>
+                            <td><span class="badge badge-status-published">Published</span></td>
+                            <td>Productivity</td>
+                            <td>4,320</td>
+                            <td>2 days ago</td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <div class="fw-semibold">Writing Emails That Actually Get Read</div>
+                              <div class="small text-muted">Slug: emails-that-get-read</div>
+                            </td>
+                            <td><span class="badge badge-status-draft">Draft</span></td>
+                            <td>Communication</td>
+                            <td>—</td>
+                            <td>3 hours ago</td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <div class="fw-semibold">How To Publish Consistently</div>
+                              <div class="small text-muted">Slug: publish-consistently</div>
+                            </td>
+                            <td><span class="badge badge-status-scheduled">Scheduled</span></td>
+                            <td>Writing</td>
+                            <td>—</td>
+                            <td>Scheduled for Mar 18</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-            <div class="col-12 col-md-4">
-              <div class="card h-100">
-                <div class="card-body">
-                  <h2 class="h6 mb-2">Users &amp; Permissions</h2>
-                  <p class="text-muted small mb-3">
-                    Manage admin users, roles and access levels.
-                  </p>
-                  <button class="btn btn-sm btn-outline-primary">Manage Users</button>
-                </div>
-              </div>
-            </div>
-            <div class="col-12 col-md-4">
-              <div class="card h-100">
-                <div class="card-body">
-                  <h2 class="h6 mb-2">SEO, Media &amp; Comments</h2>
-                  <p class="text-muted small mb-3">
-                    SEO tools, media library and comment moderation.
-                  </p>
-                  <button class="btn btn-sm btn-outline-primary">Open Tools</button>
-                </div>
-              </div>
-            </div>
-          </div>
 
-          <div class="alert alert-info mt-4 mb-0 small" role="alert">
-            This is just the Bootstrap scaffold for the admin dashboard. Your team can replace these cards
-            with full pages/components for each of the nine features you described.
-          </div>
+                <div class="card">
+                  <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">Engagement Over Time</h2>
+                  </div>
+                  <div class="card-body">
+                    <div class="chart-placeholder">
+                      Traffic &amp; engagement chart placeholder – hook analytics here.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 col-lg-4">
+                <div class="card mb-3">
+                  <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">Quick Actions</h2>
+                  </div>
+                  <div class="card-body">
+                    <div class="d-grid gap-2 mb-2">
+                      <button class="btn btn-primary btn-sm">Create New Post</button>
+                      <button class="btn btn-outline-secondary btn-sm">Upload Media</button>
+                      <button class="btn btn-outline-secondary btn-sm">Review Comments</button>
+                    </div>
+                    <p class="small text-muted mb-0">
+                      Use these shortcuts to stay in flow while managing your content.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">SEO Health Snapshot</h2>
+                  </div>
+                  <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                      <div>
+                        <div class="stat-label mb-1">Average SEO score</div>
+                        <div class="stat-value mb-0">82/100</div>
+                      </div>
+                      <span class="seo-score-badge seo-score-good">Healthy</span>
+                    </div>
+                    <ul class="list-unstyled small mb-0">
+                      <li class="d-flex justify-content-between mb-1">
+                        <span>Meta titles &amp; descriptions</span>
+                        <span class="text-success fw-semibold">Good</span>
+                      </li>
+                      <li class="d-flex justify-content-between mb-1">
+                        <span>Internal links</span>
+                        <span class="text-success fw-semibold">Good</span>
+                      </li>
+                      <li class="d-flex justify-content-between mb-1">
+                        <span>Image alt text</span>
+                        <span class="text-warning fw-semibold">Needs work</span>
+                      </li>
+                      <li class="d-flex justify-content-between">
+                        <span>Page speed</span>
+                        <span class="text-warning fw-semibold">Okay</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Posts: creation, editing, publishing -->
+          <section id="section-posts" class="dashboard-section d-none">
+            <div class="row g-3">
+              <div class="col-12 col-lg-8">
+                <div class="card mb-3">
+                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h2 class="h6 mb-0">Create / Edit Post</h2>
+                    <div class="btn-group btn-group-sm" role="group">
+                      <button class="btn btn-outline-secondary">Save as Draft</button>
+                      <button class="btn btn-outline-secondary">Preview</button>
+                      <button class="btn btn-primary">Publish</button>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <form>
+                      <div class="mb-3">
+                        <label class="form-label">Title</label>
+                        <input type="text" class="form-control" placeholder="Write a clear, compelling title..." />
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Slug</label>
+                        <input type="text" class="form-control" placeholder="auto-generated-from-title" />
+                        <div class="form-text">Used in the URL; keep it short and descriptive.</div>
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Content</label>
+                        <textarea
+                          class="form-control"
+                          rows="10"
+                          placeholder="Start writing your post here..."
+                        ></textarea>
+                      </div>
+                      <div class="row g-3">
+                        <div class="col-md-4">
+                          <label class="form-label">Category</label>
+                          <select class="form-select">
+                            <option>Productivity</option>
+                            <option>Writing</option>
+                            <option>Mindset</option>
+                            <option>Business</option>
+                          </select>
+                        </div>
+                        <div class="col-md-4">
+                          <label class="form-label">Tags</label>
+                          <input
+                            type="text"
+                            class="form-control"
+                            placeholder="productivity, deep work, habits"
+                          />
+                          <div class="form-text">Comma-separated, used for discovery and SEO.</div>
+                        </div>
+                        <div class="col-md-4">
+                          <label class="form-label">Featured image</label>
+                          <div class="input-group">
+                            <input type="text" class="form-control" placeholder="image url / filename" />
+                            <button class="btn btn-outline-secondary" type="button">Browse</button>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">Existing Posts</h2>
+                  </div>
+                  <div class="card-body p-0">
+                    <div class="table-responsive">
+                      <table class="table mb-0">
+                        <thead>
+                          <tr>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Author</th>
+                            <th>Published</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Designing Your Ideal Morning Routine</td>
+                            <td><span class="badge badge-status-published">Published</span></td>
+                            <td>You</td>
+                            <td>Feb 27, 2026</td>
+                            <td class="text-end">
+                              <button class="btn btn-sm btn-outline-secondary me-1">Edit</button>
+                              <button class="btn btn-sm btn-outline-secondary">Unpublish</button>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Why Consistency Beats Intensity</td>
+                            <td><span class="badge badge-status-draft">Draft</span></td>
+                            <td>You</td>
+                            <td>—</td>
+                            <td class="text-end">
+                              <button class="btn btn-sm btn-outline-secondary me-1">Edit</button>
+                              <button class="btn btn-sm btn-outline-secondary">Delete</button>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>5 Simple Systems for Creative Work</td>
+                            <td><span class="badge badge-status-scheduled">Scheduled</span></td>
+                            <td>You</td>
+                            <td>Mar 20, 2026</td>
+                            <td class="text-end">
+                              <button class="btn btn-sm btn-outline-secondary me-1">Edit</button>
+                              <button class="btn btn-sm btn-outline-secondary">Unpublish</button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 col-lg-4">
+                <div class="card mb-3">
+                  <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">Post Status</h2>
+                  </div>
+                  <div class="card-body">
+                    <div class="mb-3">
+                      <label class="form-label">Visibility</label>
+                      <select class="form-select">
+                        <option>Public</option>
+                        <option>Unlisted</option>
+                        <option>Private</option>
+                      </select>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Publish status</label>
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="statusRadio" id="statusDraft" checked />
+                        <label class="form-check-label" for="statusDraft">Draft</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="statusRadio" id="statusPublished" />
+                        <label class="form-check-label" for="statusPublished">Publish immediately</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="statusRadio" id="statusScheduled" />
+                        <label class="form-check-label" for="statusScheduled">Schedule for later</label>
+                      </div>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Schedule date &amp; time</label>
+                      <div class="row g-2">
+                        <div class="col-7">
+                          <input type="date" class="form-control" />
+                        </div>
+                        <div class="col-5">
+                          <input type="time" class="form-control" />
+                        </div>
+                      </div>
+                      <div class="form-text">Used when “Schedule for later” is selected.</div>
+                    </div>
+                    <button class="btn btn-outline-danger btn-sm">Move to Trash</button>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">Quick SEO Checks</h2>
+                  </div>
+                  <div class="card-body">
+                    <div class="mb-3">
+                      <label class="form-label">Focus keyword</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="e.g. morning routine for creators"
+                      />
+                    </div>
+                    <ul class="list-unstyled small mb-0">
+                      <li class="d-flex justify-content-between mb-1">
+                        <span>Keyword in title</span>
+                        <span class="text-success fw-semibold">Yes</span>
+                      </li>
+                      <li class="d-flex justify-content-between mb-1">
+                        <span>Keyword in first paragraph</span>
+                        <span class="text-danger fw-semibold">No</span>
+                      </li>
+                      <li class="d-flex justify-content-between mb-1">
+                        <span>Images with alt text</span>
+                        <span class="text-warning fw-semibold">2/5</span>
+                      </li>
+                      <li class="d-flex justify-content-between">
+                        <span>Internal &amp; external links</span>
+                        <span class="text-success fw-semibold">Good</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Categories & Tags -->
+          <section id="section-categories" class="dashboard-section d-none">
+            <div class="row g-3">
+              <div class="col-12 col-lg-6">
+                <div class="card h-100">
+                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h2 class="h6 mb-0">Categories</h2>
+                    <button class="btn btn-sm btn-primary">Add Category</button>
+                  </div>
+                  <div class="card-body">
+                    <form class="mb-3">
+                      <div class="mb-2">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" placeholder="Productivity" />
+                      </div>
+                      <div class="mb-2">
+                        <label class="form-label">Slug</label>
+                        <input type="text" class="form-control" placeholder="productivity" />
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" rows="2" placeholder="Optional, for internal use."></textarea>
+                      </div>
+                      <button type="submit" class="btn btn-sm btn-outline-secondary">Save Category</button>
+                    </form>
+                    <div class="table-responsive">
+                      <table class="table mb-0">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Posts</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Productivity</td>
+                            <td>34</td>
+                            <td class="text-end">
+                              <button class="btn btn-sm btn-outline-secondary me-1">Edit</button>
+                              <button class="btn btn-sm btn-outline-secondary">Merge</button>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Writing</td>
+                            <td>22</td>
+                            <td class="text-end">
+                              <button class="btn btn-sm btn-outline-secondary me-1">Edit</button>
+                              <button class="btn btn-sm btn-outline-secondary">Merge</button>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Mindset</td>
+                            <td>18</td>
+                            <td class="text-end">
+                              <button class="btn btn-sm btn-outline-secondary me-1">Edit</button>
+                              <button class="btn btn-sm btn-outline-secondary">Merge</button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 col-lg-6">
+                <div class="card h-100">
+                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h2 class="h6 mb-0">Tags</h2>
+                    <button class="btn btn-sm btn-primary">Add Tag</button>
+                  </div>
+                  <div class="card-body">
+                    <form class="mb-3">
+                      <div class="mb-2">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" placeholder="deep work" />
+                      </div>
+                      <div class="mb-2">
+                        <label class="form-label">Slug</label>
+                        <input type="text" class="form-control" placeholder="deep-work" />
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Color (optional)</label>
+                        <input type="color" class="form-control form-control-color" value="#6366f1" />
+                      </div>
+                      <button type="submit" class="btn btn-sm btn-outline-secondary">Save Tag</button>
+                    </form>
+                    <div class="table-responsive">
+                      <table class="table mb-0">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Posts</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <span class="badge" style="background-color: rgba(99, 102, 241, 0.1); color: #4f46e5;">
+                                deep work
+                              </span>
+                            </td>
+                            <td>14</td>
+                            <td class="text-end">
+                              <button class="btn btn-sm btn-outline-secondary me-1">Edit</button>
+                              <button class="btn btn-sm btn-outline-secondary">Delete</button>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <span class="badge" style="background-color: rgba(16, 185, 129, 0.1); color: #059669;">
+                                habits
+                              </span>
+                            </td>
+                            <td>20</td>
+                            <td class="text-end">
+                              <button class="btn btn-sm btn-outline-secondary me-1">Edit</button>
+                              <button class="btn btn-sm btn-outline-secondary">Delete</button>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <span class="badge" style="background-color: rgba(248, 113, 113, 0.1); color: #dc2626;">
+                                burnout
+                              </span>
+                            </td>
+                            <td>7</td>
+                            <td class="text-end">
+                              <button class="btn btn-sm btn-outline-secondary me-1">Edit</button>
+                              <button class="btn btn-sm btn-outline-secondary">Delete</button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Drafts & Scheduling -->
+          <section id="section-scheduling" class="dashboard-section d-none">
+            <div class="row g-3">
+              <div class="col-12 col-lg-7">
+                <div class="card h-100">
+                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h2 class="h6 mb-0">Drafts</h2>
+                    <span class="badge bg-secondary-subtle text-secondary-emphasis">24 drafts</span>
+                  </div>
+                  <div class="card-body p-0">
+                    <div class="table-responsive">
+                      <table class="table mb-0">
+                        <thead>
+                          <tr>
+                            <th>Title</th>
+                            <th>Last Edited</th>
+                            <th>Category</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>How to Protect Your Focus</td>
+                            <td>1 hour ago</td>
+                            <td>Productivity</td>
+                            <td class="text-end">
+                              <button class="btn btn-sm btn-outline-secondary me-1">Edit</button>
+                              <button class="btn btn-sm btn-outline-secondary">Schedule</button>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>The Myth of Motivation</td>
+                            <td>Yesterday</td>
+                            <td>Mindset</td>
+                            <td class="text-end">
+                              <button class="btn btn-sm btn-outline-secondary me-1">Edit</button>
+                              <button class="btn btn-sm btn-outline-secondary">Schedule</button>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Systems Over Goals</td>
+                            <td>3 days ago</td>
+                            <td>Business</td>
+                            <td class="text-end">
+                              <button class="btn btn-sm btn-outline-secondary me-1">Edit</button>
+                              <button class="btn btn-sm btn-outline-secondary">Schedule</button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 col-lg-5">
+                <div class="card mb-3">
+                  <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">Upcoming Schedule</h2>
+                  </div>
+                  <div class="card-body">
+                    <ul class="list-unstyled small mb-0">
+                      <li class="mb-2 d-flex justify-content-between">
+                        <div>
+                          <div class="fw-semibold">How To Publish Consistently</div>
+                          <div class="text-muted">Mar 18 · 9:00 AM</div>
+                        </div>
+                        <span class="badge badge-status-scheduled align-self-start">Scheduled</span>
+                      </li>
+                      <li class="mb-2 d-flex justify-content-between">
+                        <div>
+                          <div class="fw-semibold">A Simple Weekly Review Ritual</div>
+                          <div class="text-muted">Mar 22 · 4:30 PM</div>
+                        </div>
+                        <span class="badge badge-status-scheduled align-self-start">Scheduled</span>
+                      </li>
+                      <li class="d-flex justify-content-between">
+                        <div>
+                          <div class="fw-semibold">How to Take Rest Seriously</div>
+                          <div class="text-muted">Mar 29 · 7:00 PM</div>
+                        </div>
+                        <span class="badge badge-status-scheduled align-self-start">Scheduled</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">Schedule New Post</h2>
+                  </div>
+                  <div class="card-body">
+                    <form>
+                      <div class="mb-3">
+                        <label class="form-label">Select Draft</label>
+                        <select class="form-select">
+                          <option>How to Protect Your Focus</option>
+                          <option>The Myth of Motivation</option>
+                          <option>Systems Over Goals</option>
+                        </select>
+                      </div>
+                      <div class="row g-2 mb-3">
+                        <div class="col-7">
+                          <label class="form-label">Date</label>
+                          <input type="date" class="form-control" />
+                        </div>
+                        <div class="col-5">
+                          <label class="form-label">Time</label>
+                          <input type="time" class="form-control" />
+                        </div>
+                      </div>
+                      <button type="submit" class="btn btn-primary btn-sm">Schedule</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Analytics -->
+          <section id="section-analytics" class="dashboard-section d-none">
+            <div class="row g-3 mb-3">
+              <div class="col-12 col-md-4">
+                <div class="card h-100">
+                  <div class="card-body">
+                    <div class="stat-label mb-1">Readers this month</div>
+                    <div class="stat-value mb-1">18.6k</div>
+                    <div class="small text-success fw-semibold">+22% vs last month</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-md-4">
+                <div class="card h-100">
+                  <div class="card-body">
+                    <div class="stat-label mb-1">Avg. time on page</div>
+                    <div class="stat-value mb-1">4m 12s</div>
+                    <div class="small text-muted">Across all posts</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-md-4">
+                <div class="card h-100">
+                  <div class="card-body">
+                    <div class="stat-label mb-1">Email signups from blog</div>
+                    <div class="stat-value mb-1">742</div>
+                    <div class="small text-success fw-semibold">Conversion 3.4%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-12 col-lg-8">
+                <div class="card mb-3">
+                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h2 class="h6 mb-0">Top Performing Posts</h2>
+                    <select class="form-select form-select-sm" style="max-width: 150px;">
+                      <option>Last 30 days</option>
+                      <option>Last 7 days</option>
+                      <option>Last 90 days</option>
+                    </select>
+                  </div>
+                  <div class="card-body p-0">
+                    <div class="table-responsive">
+                      <table class="table mb-0">
+                        <thead>
+                          <tr>
+                            <th>Post</th>
+                            <th>Views</th>
+                            <th>Avg. Time</th>
+                            <th>CTR</th>
+                            <th>Bounce</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Designing a Calm Productivity System</td>
+                            <td>8,430</td>
+                            <td>5m 02s</td>
+                            <td>7.4%</td>
+                            <td>38%</td>
+                          </tr>
+                          <tr>
+                            <td>Why Consistency Beats Intensity</td>
+                            <td>6,320</td>
+                            <td>4m 17s</td>
+                            <td>6.1%</td>
+                            <td>42%</td>
+                          </tr>
+                          <tr>
+                            <td>5 Simple Systems for Creative Work</td>
+                            <td>5,108</td>
+                            <td>3m 54s</td>
+                            <td>5.9%</td>
+                            <td>40%</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">Traffic Sources</h2>
+                  </div>
+                  <div class="card-body">
+                    <div class="row g-3">
+                      <div class="col-6">
+                        <ul class="list-unstyled small mb-0">
+                          <li class="d-flex justify-content-between mb-1">
+                            <span>Search</span>
+                            <span class="fw-semibold">54%</span>
+                          </li>
+                          <li class="d-flex justify-content-between mb-1">
+                            <span>Direct</span>
+                            <span class="fw-semibold">18%</span>
+                          </li>
+                          <li class="d-flex justify-content-between mb-1">
+                            <span>Social</span>
+                            <span class="fw-semibold">16%</span>
+                          </li>
+                          <li class="d-flex justify-content-between">
+                            <span>Referrals</span>
+                            <span class="fw-semibold">12%</span>
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="col-6">
+                        <div class="chart-placeholder">
+                          Source breakdown chart placeholder – connect to analytics provider.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 col-lg-4">
+                <div class="card">
+                  <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">Conversion by Post</h2>
+                  </div>
+                  <div class="card-body">
+                    <ul class="list-unstyled small mb-0">
+                      <li class="mb-2 d-flex justify-content-between">
+                        <div>
+                          <div class="fw-semibold">Designing a Calm Productivity System</div>
+                          <div class="text-muted">Email signups</div>
+                        </div>
+                        <div class="text-end">
+                          <div class="fw-semibold">4.1%</div>
+                          <div class="text-success">+0.8%</div>
+                        </div>
+                      </li>
+                      <li class="mb-2 d-flex justify-content-between">
+                        <div>
+                          <div class="fw-semibold">Why Consistency Beats Intensity</div>
+                          <div class="text-muted">Email signups</div>
+                        </div>
+                        <div class="text-end">
+                          <div class="fw-semibold">3.7%</div>
+                          <div class="text-success">+0.4%</div>
+                        </div>
+                      </li>
+                      <li class="d-flex justify-content-between">
+                        <div>
+                          <div class="fw-semibold">5 Simple Systems for Creative Work</div>
+                          <div class="text-muted">Email signups</div>
+                        </div>
+                        <div class="text-end">
+                          <div class="fw-semibold">2.9%</div>
+                          <div class="text-danger">-0.3%</div>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Users & Permissions -->
+          <section id="section-users" class="dashboard-section d-none">
+            <div class="row g-3">
+              <div class="col-12 col-lg-7">
+                <div class="card">
+                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h2 class="h6 mb-0">Users</h2>
+                    <button class="btn btn-sm btn-primary">Invite User</button>
+                  </div>
+                  <div class="card-body p-0">
+                    <div class="table-responsive">
+                      <table class="table mb-0">
+                        <thead>
+                          <tr>
+                            <th>User</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Last Active</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <div class="fw-semibold">You</div>
+                              <div class="text-muted small">you@example.com</div>
+                            </td>
+                            <td>Owner</td>
+                            <td><span class="badge bg-success-subtle text-success-emphasis">Active</span></td>
+                            <td>Just now</td>
+                            <td class="text-end">
+                              <button class="btn btn-sm btn-outline-secondary">Manage</button>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <div class="fw-semibold">Content Editor</div>
+                              <div class="text-muted small">editor@example.com</div>
+                            </td>
+                            <td>Editor</td>
+                            <td><span class="badge bg-success-subtle text-success-emphasis">Active</span></td>
+                            <td>2 days ago</td>
+                            <td class="text-end">
+                              <button class="btn btn-sm btn-outline-secondary">Manage</button>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <div class="fw-semibold">Guest Writer</div>
+                              <div class="text-muted small">guest@example.com</div>
+                            </td>
+                            <td>Author</td>
+                            <td><span class="badge bg-secondary-subtle text-secondary-emphasis">Invited</span></td>
+                            <td>—</td>
+                            <td class="text-end">
+                              <button class="btn btn-sm btn-outline-secondary">Resend Invite</button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 col-lg-5">
+                <div class="card mb-3">
+                  <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">Invite User</h2>
+                  </div>
+                  <div class="card-body">
+                    <form>
+                      <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" placeholder="person@example.com" />
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Role</label>
+                        <select class="form-select">
+                          <option>Owner</option>
+                          <option>Editor</option>
+                          <option>Author</option>
+                          <option>Contributor</option>
+                          <option>Viewer</option>
+                        </select>
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Permissions</label>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="permPosts" checked />
+                          <label class="form-check-label" for="permPosts">Manage posts</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="permComments" checked />
+                          <label class="form-check-label" for="permComments">Moderate comments</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="permAnalytics" />
+                          <label class="form-check-label" for="permAnalytics">View analytics</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="permSettings" />
+                          <label class="form-check-label" for="permSettings">Manage settings</label>
+                        </div>
+                      </div>
+                      <button type="submit" class="btn btn-primary btn-sm">Send Invite</button>
+                    </form>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">Role Definitions</h2>
+                  </div>
+                  <div class="card-body">
+                    <ul class="small mb-0">
+                      <li class="mb-1">
+                        <strong>Owner</strong> – Full access to everything including billing and settings.
+                      </li>
+                      <li class="mb-1">
+                        <strong>Editor</strong> – Manage all posts, pages, media and comments.
+                      </li>
+                      <li class="mb-1">
+                        <strong>Author</strong> – Create and edit own posts, upload media.
+                      </li>
+                      <li class="mb-1">
+                        <strong>Contributor</strong> – Write drafts, cannot publish.
+                      </li>
+                      <li>
+                        <strong>Viewer</strong> – Read-only access to analytics and content.
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- SEO Tools -->
+          <section id="section-seo" class="dashboard-section d-none">
+            <div class="row g-3">
+              <div class="col-12 col-lg-7">
+                <div class="card mb-3">
+                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h2 class="h6 mb-0">SEO Preview</h2>
+                    <span class="seo-score-badge seo-score-good">Score: 84 / 100</span>
+                  </div>
+                  <div class="card-body">
+                    <form>
+                      <div class="mb-3">
+                        <label class="form-label">Meta title</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="Designing a Calm Productivity System – Blog Name"
+                        />
+                        <div class="form-text small">50–60 characters recommended.</div>
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Meta description</label>
+                        <textarea
+                          class="form-control"
+                          rows="2"
+                          placeholder="Write a short, compelling description that makes people want to click..."
+                        ></textarea>
+                        <div class="form-text small">140–160 characters recommended.</div>
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Canonical URL</label>
+                        <input type="text" class="form-control" placeholder="https://yourblog.com/post-slug" />
+                      </div>
+                    </form>
+
+                    <div class="border rounded-3 p-3 bg-light small">
+                      <div class="text-muted mb-1">Google-style preview</div>
+                      <div class="text-primary" style="font-size: 0.95rem;">
+                        Designing a Calm Productivity System – Blog Name
+                      </div>
+                      <div class="text-success" style="font-size: 0.8rem;">https://yourblog.com/post-slug</div>
+                      <div class="text-muted" style="font-size: 0.8rem;">
+                        Preview of how your meta title and description could appear in search results.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">SEO Checklist</h2>
+                  </div>
+                  <div class="card-body">
+                    <div class="row g-3">
+                      <div class="col-12 col-md-6">
+                        <ul class="list-unstyled small mb-0">
+                          <li class="mb-1">
+                            <input class="form-check-input me-1" type="checkbox" checked />
+                            Focus keyword in title
+                          </li>
+                          <li class="mb-1">
+                            <input class="form-check-input me-1" type="checkbox" />
+                            Focus keyword in first paragraph
+                          </li>
+                          <li class="mb-1">
+                            <input class="form-check-input me-1" type="checkbox" checked />
+                            Heading hierarchy is logical (H1 → H2 → H3)
+                          </li>
+                          <li>
+                            <input class="form-check-input me-1" type="checkbox" />
+                            At least one internal and external link
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <ul class="list-unstyled small mb-0">
+                          <li class="mb-1">
+                            <input class="form-check-input me-1" type="checkbox" />
+                            Images have descriptive alt text
+                          </li>
+                          <li class="mb-1">
+                            <input class="form-check-input me-1" type="checkbox" />
+                            Slug is short, readable and includes keyword
+                          </li>
+                          <li class="mb-1">
+                            <input class="form-check-input me-1" type="checkbox" checked />
+                            Mobile–friendly layout
+                          </li>
+                          <li>
+                            <input class="form-check-input me-1" type="checkbox" />
+                            Page loads quickly (under 3s)
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 col-lg-5">
+                <div class="card">
+                  <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">Site-wide SEO Settings</h2>
+                  </div>
+                  <div class="card-body">
+                    <form>
+                      <div class="mb-3">
+                        <label class="form-label">Site title</label>
+                        <input type="text" class="form-control" placeholder="Your Blog Name" />
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Default meta description</label>
+                        <textarea
+                          class="form-control"
+                          rows="2"
+                          placeholder="Short description of your blog used when no custom description is set..."
+                        ></textarea>
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Social sharing image</label>
+                        <div class="input-group">
+                          <input type="text" class="form-control" placeholder="image url / filename" />
+                          <button class="btn btn-outline-secondary" type="button">Browse</button>
+                        </div>
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Robots</label>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="robotsIndex" checked />
+                          <label class="form-check-label" for="robotsIndex">Allow search engines to index site</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="robotsFollow" checked />
+                          <label class="form-check-label" for="robotsFollow">
+                            Allow search engines to follow links
+                          </label>
+                        </div>
+                      </div>
+                      <button type="submit" class="btn btn-primary btn-sm">Save Settings</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Media Library -->
+          <section id="section-media" class="dashboard-section d-none">
+            <div class="row g-3">
+              <div class="col-12 col-lg-8">
+                <div class="card mb-3">
+                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h2 class="h6 mb-0">Media Library</h2>
+                    <button class="btn btn-sm btn-primary">Upload</button>
+                  </div>
+                  <div class="card-body">
+                    <div class="row g-3">
+                      <div class="col-6 col-md-4">
+                        <div class="border rounded-3 p-2 h-100 d-flex flex-column">
+                          <img
+                            src="https://via.placeholder.com/150x100"
+                            class="media-thumb mb-2"
+                            alt="Placeholder"
+                          />
+                          <div class="small fw-semibold">morning-routine.jpg</div>
+                          <div class="small text-muted">120 KB · JPG</div>
+                        </div>
+                      </div>
+                      <div class="col-6 col-md-4">
+                        <div class="border rounded-3 p-2 h-100 d-flex flex-column">
+                          <img
+                            src="https://via.placeholder.com/150x100"
+                            class="media-thumb mb-2"
+                            alt="Placeholder"
+                          />
+                          <div class="small fw-semibold">workspace-desk.png</div>
+                          <div class="small text-muted">340 KB · PNG</div>
+                        </div>
+                      </div>
+                      <div class="col-6 col-md-4">
+                        <div class="border rounded-3 p-2 h-100 d-flex flex-column">
+                          <img
+                            src="https://via.placeholder.com/150x100"
+                            class="media-thumb mb-2"
+                            alt="Placeholder"
+                          />
+                          <div class="small fw-semibold">weekly-review-cover.png</div>
+                          <div class="small text-muted">220 KB · PNG</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">Details</h2>
+                  </div>
+                  <div class="card-body">
+                    <form>
+                      <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                          <div class="mb-3">
+                            <label class="form-label">File name</label>
+                            <input type="text" class="form-control" value="morning-routine.jpg" />
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label">Alt text</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              placeholder="Overhead view of a calm morning workspace"
+                            />
+                          </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                          <div class="mb-3">
+                            <label class="form-label">Caption</label>
+                            <textarea class="form-control" rows="2"></textarea>
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label">Used in posts</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              value="Designing a Calm Productivity System"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <button class="btn btn-primary btn-sm" type="submit">Save Changes</button>
+                      <button class="btn btn-outline-danger btn-sm ms-2" type="button">Delete</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 col-lg-4">
+                <div class="card">
+                  <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">Upload New Media</h2>
+                  </div>
+                  <div class="card-body">
+                    <div class="border border-dashed rounded-3 p-4 text-center mb-3 bg-light">
+                      <p class="mb-1">Drag &amp; drop files here</p>
+                      <p class="small text-muted mb-2">or</p>
+                      <button class="btn btn-outline-secondary btn-sm">Choose files</button>
+                    </div>
+                    <p class="small text-muted mb-0">
+                      Recommended: JPG or PNG, max 5MB per file. For best performance, compress images before
+                      uploading.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Comments -->
+          <section id="section-comments" class="dashboard-section d-none">
+            <div class="row g-3">
+              <div class="col-12 col-lg-7">
+                <div class="card">
+                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h2 class="h6 mb-0">Pending Comments</h2>
+                    <div class="btn-group btn-group-sm" role="group">
+                      <button class="btn btn-outline-secondary">Approve All</button>
+                      <button class="btn btn-outline-secondary">Mark All as Spam</button>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="comment-item d-flex">
+                      <div class="me-3">
+                        <div class="avatar-circle">A</div>
+                      </div>
+                      <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between">
+                          <div>
+                            <div class="fw-semibold">Alex</div>
+                            <div class="small text-muted">On: Designing a Calm Productivity System</div>
+                          </div>
+                          <div class="text-end small text-muted">2 hours ago</div>
+                        </div>
+                        <p class="small mt-2 mb-2">
+                          Loved this! The "no more heroic sprints" part really resonated. Curious how you handle
+                          days when everything goes off the rails?
+                        </p>
+                        <div class="d-flex gap-2">
+                          <button class="btn btn-sm btn-outline-success">Approve</button>
+                          <button class="btn btn-sm btn-outline-secondary">Reply</button>
+                          <button class="btn btn-sm btn-outline-danger">Spam</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="comment-item d-flex">
+                      <div class="me-3">
+                        <div class="avatar-circle">J</div>
+                      </div>
+                      <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between">
+                          <div>
+                            <div class="fw-semibold">Jordan</div>
+                            <div class="small text-muted">On: Why Consistency Beats Intensity</div>
+                          </div>
+                          <div class="text-end small text-muted">5 hours ago</div>
+                        </div>
+                        <p class="small mt-2 mb-2">
+                          I've tried so many systems and always fall off. Any tips for restarting after a "failed"
+                          week without beating myself up?
+                        </p>
+                        <div class="d-flex gap-2">
+                          <button class="btn btn-sm btn-outline-success">Approve</button>
+                          <button class="btn btn-sm btn-outline-secondary">Reply</button>
+                          <button class="btn btn-sm btn-outline-danger">Spam</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="comment-item d-flex">
+                      <div class="me-3">
+                        <div class="avatar-circle">S</div>
+                      </div>
+                      <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between">
+                          <div>
+                            <div class="fw-semibold">Sam</div>
+                            <div class="small text-muted">On: 5 Simple Systems for Creative Work</div>
+                          </div>
+                          <div class="text-end small text-muted">Yesterday</div>
+                        </div>
+                        <p class="small mt-2 mb-2">
+                          Great article. I shared this with my team and we're using it as a template for our own
+                          workflows.
+                        </p>
+                        <div class="d-flex gap-2">
+                          <button class="btn btn-sm btn-outline-success">Approve</button>
+                          <button class="btn btn-sm btn-outline-secondary">Reply</button>
+                          <button class="btn btn-sm btn-outline-danger">Spam</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 col-lg-5">
+                <div class="card mb-3">
+                  <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">Filters</h2>
+                  </div>
+                  <div class="card-body">
+                    <form class="row g-3">
+                      <div class="col-12 col-md-6">
+                        <label class="form-label">Status</label>
+                        <select class="form-select form-select-sm">
+                          <option>Pending</option>
+                          <option>Approved</option>
+                          <option>Spam</option>
+                          <option>Trash</option>
+                        </select>
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label class="form-label">Post</label>
+                        <select class="form-select form-select-sm">
+                          <option>All posts</option>
+                          <option>Designing a Calm Productivity System</option>
+                          <option>Why Consistency Beats Intensity</option>
+                          <option>5 Simple Systems for Creative Work</option>
+                        </select>
+                      </div>
+                      <div class="col-12">
+                        <label class="form-label">Search</label>
+                        <input
+                          type="text"
+                          class="form-control form-control-sm"
+                          placeholder="Search by author, content, or email"
+                        />
+                      </div>
+                    </form>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">Comment Settings</h2>
+                  </div>
+                  <div class="card-body">
+                    <form>
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="commentsOpen" checked />
+                        <label class="form-check-label" for="commentsOpen">Allow comments on new posts</label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="commentsModerate" checked />
+                        <label class="form-check-label" for="commentsModerate">
+                          Comments must be manually approved
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="commentsEmail" />
+                        <label class="form-check-label" for="commentsEmail">
+                          Email me when someone comments
+                        </label>
+                      </div>
+                      <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="commentsSpam" checked />
+                        <label class="form-check-label" for="commentsSpam">
+                          Automatically flag comments with links as spam
+                        </label>
+                      </div>
+                      <button class="btn btn-primary btn-sm" type="submit">Save Settings</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
       </main>
     </div>
   </div>
 
-  <!-- Bootstrap JS bundle -->
+  <!-- Bootstrap JS -->
   <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
     crossorigin="anonymous"
   ></script>
+
+  <!-- Section switching -->
+  <script>
+    (function () {
+      const sectionTitle = document.getElementById("sectionTitle");
+      const sections = document.querySelectorAll(".dashboard-section");
+      const navButtons = document.querySelectorAll("#sidebarNav .nav-link");
+      const mobileSelect = document.getElementById("mobileSectionSelect");
+
+      function showSection(targetId) {
+        sections.forEach((section) => {
+          section.classList.toggle("d-none", section.id !== targetId);
+        });
+
+        navButtons.forEach((btn) => {
+          btn.classList.toggle("active", btn.getAttribute("data-target") === targetId);
+        });
+
+        const titles = {
+          "section-overview": "Overview",
+          "section-posts": "Posts",
+          "section-categories": "Categories & Tags",
+          "section-scheduling": "Drafts & Scheduling",
+          "section-analytics": "Analytics",
+          "section-users": "Users & Permissions",
+          "section-seo": "SEO Tools",
+          "section-media": "Media Library",
+          "section-comments": "Comments",
+        };
+        sectionTitle.textContent = titles[targetId] || "Dashboard";
+
+        if (mobileSelect && mobileSelect.value !== targetId) {
+          mobileSelect.value = targetId;
+        }
+      }
+
+      navButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const target = btn.getAttribute("data-target");
+          if (target) showSection(target);
+        });
+      });
+
+      if (mobileSelect) {
+        mobileSelect.addEventListener("change", (e) => {
+          showSection(e.target.value);
+        });
+      }
+
+      // Initialize default view
+      showSection("section-overview");
+    })();
+  </script>
 </body>
 </html>
 
