@@ -279,28 +279,9 @@
                     </div>
 
                     <!-- Categories Filter -->
-                    <div class="filter-group">
+                    <div class="filter-group" id="categoriesFilterGroup">
                         <h6><i class="fas fa-folder me-2"></i>Categories</h6>
-                        <div class="filter-option">
-                            <input type="checkbox" id="cat-tech" class="form-check-input category-filter">
-                            <label for="cat-tech" class="form-check-label">Technology</label>
-                            <span>(24)</span>
-                        </div>
-                        <div class="filter-option">
-                            <input type="checkbox" id="cat-lifestyle" class="form-check-input category-filter">
-                            <label for="cat-lifestyle" class="form-check-label">Lifestyle</label>
-                            <span>(18)</span>
-                        </div>
-                        <div class="filter-option">
-                            <input type="checkbox" id="cat-travel" class="form-check-input category-filter">
-                            <label for="cat-travel" class="form-check-label">Travel</label>
-                            <span>(21)</span>
-                        </div>
-                        <div class="filter-option">
-                            <input type="checkbox" id="cat-growth" class="form-check-input category-filter">
-                            <label for="cat-growth" class="form-check-label">Personal Growth</label>
-                            <span>(32)</span>
-                        </div>
+                        <div class="text-center py-2"><div class="spinner-border spinner-border-sm text-primary"></div></div>
                     </div>
 
                     <!-- Date Range Filter -->
@@ -435,6 +416,7 @@
     
     <!-- Custom JS -->
     <script src="../js/app.js"></script>
+    <script type="module" src="../js/firebase-integration.js"></script>
     <script>
         // Initialize AOS
         AOS.init();
@@ -589,8 +571,7 @@
             renderArticles(getFilteredArticles());
         }
 
-        // Initial render
-        renderArticles(allArticles);
+        // Initial render removed - handled by firebase-integration.js
     </script>
 </body>
 </html>

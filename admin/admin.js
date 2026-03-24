@@ -32,7 +32,7 @@ class AdminDashboard {
         <div class="card p-4" style="width: 100%; max-width: 400px;">
           <div class="card-body">
             <h2 class="card-title text-center mb-4">Admin Login</h2>
-            <form id="loginForm">
+            <form id="loginForm" onsubmit="return false;">
               <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" class="form-control" id="email" required>
@@ -85,6 +85,44 @@ class AdminDashboard {
     // Load the admin HTML and integrate Firebase
     this.setupEventListeners();
     this.loadOverview();
+    
+    // Seed initial data if needed
+    this.seedInitialData();
+  }
+
+  // Seed default categories and tags if they don't exist
+  async seedInitialData() {
+    try {
+      const { defaultCategories, defaultTags } = await import('../database-schema.js');
+      
+      // Check categories
+      const catSnap = await getDocs(collection(db, collectionNames.CATEGORIES));
+      if (catSnap.empty) {
+        console.log('Seeding default categories...');
+        for (const cat of defaultCategories) {
+          await addDoc(collection(db, collectionNames.CATEGORIES), {
+            ...cat,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          });
+        }
+      }
+
+      // Check tags
+      const tagSnap = await getDocs(collection(db, collectionNames.TAGS));
+      if (tagSnap.empty) {
+        console.log('Seeding default tags...');
+        for (const tag of defaultTags) {
+          await addDoc(collection(db, collectionNames.TAGS), {
+            ...tag,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          });
+        }
+      }
+    } catch (err) {
+      console.error('Error seeding data:', err);
+    }
   }
 
   // Show warning when running from file:// protocol
@@ -131,10 +169,27 @@ class AdminDashboard {
     const navButtons = document.querySelectorAll('#sidebarNav .nav-link');
     navButtons.forEach(button => {
       button.addEventListener('click', (e) => {
-        const target = e.target.getAttribute('data-target');
+        const target = e.currentTarget.getAttribute('data-target');
         this.showSection(target);
       });
     });
+
+    // New Post buttons
+    const headerNewPostBtn = document.getElementById('headerNewPostBtn');
+    if (headerNewPostBtn) {
+      headerNewPostBtn.addEventListener('click', () => {
+        this.showSection('section-posts');
+        this.resetPostForm();
+      });
+    }
+
+    const quickNewPostBtn = document.getElementById('quickNewPostBtn');
+    if (quickNewPostBtn) {
+      quickNewPostBtn.addEventListener('click', () => {
+        this.showSection('section-posts');
+        this.resetPostForm();
+      });
+    }
 
     // Mobile section selector
     const mobileSelect = document.getElementById('mobileSectionSelect');
@@ -180,16 +235,36 @@ class AdminDashboard {
       }
     });
 
+    // Update section title
+    const sectionTitle = document.getElementById('sectionTitle');
+    if (sectionTitle) {
+      const titles = {
+        'section-overview': 'Overview',
+        'section-posts': 'Posts & Content',
+        'section-categories': 'Categories & Tags',
+        'section-scheduling': 'Drafts & Scheduling',
+        'section-analytics': 'Analytics',
+        'section-users': 'Users & Permissions',
+        'section-seo': 'SEO Tools',
+        'section-media': 'Media Library',
+        'section-comments': 'Comments'
+      };
+      sectionTitle.textContent = titles[sectionId] || 'Dashboard';
+    }
+
     // Load section data
     switch (sectionId) {
       case 'section-overview':
+        // loadOverview will call loadRecentPostsOverview
         this.loadOverview();
         break;
       case 'section-posts':
         this.loadPosts();
+        this.loadFormOptions();
         break;
       case 'section-categories':
         this.loadCategories();
+        this.loadTags();
         break;
       case 'section-users':
         this.loadUsers();
@@ -200,49 +275,90 @@ class AdminDashboard {
   // Load overview data
   async loadOverview() {
     try {
-      // Get published posts count
-      const postsQuery = query(collection(db, collectionNames.POSTS), where('status', '==', 'published'));
-      const postsSnapshot = await getDocs(postsQuery);
-      const publishedCount = postsSnapshot.size;
+      // Get posts count
+      const postsSnapshot = await getDocs(collection(db, collectionNames.POSTS));
+      const totalPosts = postsSnapshot.size;
+      const publishedCount = postsSnapshot.docs.filter(d => d.data().status === 'published').length;
+      console.log('Overview stats loaded:', { total: totalPosts, published: publishedCount });
 
       // Update overview stats
       const stats = {
-        totalPosts: 128, // This would come from a real count
+        totalPosts: totalPosts,
         published: publishedCount,
-        views: 42400,
-        pendingComments: 34
+        views: 0,
+        pendingComments: 0
       };
 
-      // Update DOM elements (you'll need to add appropriate IDs to your HTML)
       this.updateOverviewStats(stats);
+      await this.loadRecentPostsOverview();
     } catch (error) {
       console.error('Error loading overview:', error);
     }
   }
 
+  // Load recent posts for overview table
+  async loadRecentPostsOverview() {
+    try {
+      console.log('Loading recent posts for overview...');
+      const q = query(collection(db, collectionNames.POSTS));
+      const snapshot = await getDocs(q);
+      let posts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      
+      // Sort in memory to avoid index requirement
+      posts.sort((a, b) => this._getTimestampDate(b.createdAt) - this._getTimestampDate(a.createdAt));
+      posts = posts.slice(0, 5);
+
+      console.log('Recent posts found:', posts.length);
+      
+      const tbody = document.querySelector('#section-overview table tbody');
+      if (!tbody) return;
+
+      if (posts.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4">No posts yet</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = posts.map(post => `
+        <tr>
+          <td>
+            <div class="fw-semibold">${post.title}</div>
+            <div class="small text-muted">${post.slug}</div>
+          </td>
+          <td><span class="badge ${this.getStatusBadgeClass(post.status)}">${post.status}</span></td>
+          <td>${post.category?.name || '—'}</td>
+          <td>${post.views || 0}</td>
+          <td>${this.formatDate(post.updatedAt?.toDate ? post.updatedAt.toDate() : post.updatedAt)}</td>
+        </tr>
+      `).join('');
+    } catch (error) {
+      console.log('Error loading recent posts overview:', error);
+    }
+  }
+
   // Update overview statistics
   updateOverviewStats(stats) {
-    const totalPostsEl = document.querySelector('.stat-value:nth-child(2)');
-    const publishedEl = document.querySelector('.stat-value:nth-child(5)');
-    const viewsEl = document.querySelector('.stat-value:nth-child(8)');
-    const commentsEl = document.querySelector('.stat-value:nth-child(11)');
-
-    if (totalPostsEl) totalPostsEl.textContent = stats.totalPosts;
-    if (publishedEl) publishedEl.textContent = stats.published;
-    if (viewsEl) viewsEl.textContent = this.formatNumber(stats.views);
-    if (commentsEl) commentsEl.textContent = stats.pendingComments;
+    const statCards = document.querySelectorAll('.stat-value');
+    if (statCards.length >= 4) {
+      statCards[0].textContent = stats.totalPosts;
+      statCards[1].textContent = stats.published;
+      statCards[2].textContent = this.formatNumber(stats.views);
+      statCards[3].textContent = stats.pendingComments;
+    }
   }
 
   // Load posts management
   async loadPosts() {
     try {
-      const postsQuery = query(collection(db, collectionNames.POSTS), orderBy('createdAt', 'desc'), limit(10));
+      const postsQuery = query(collection(db, collectionNames.POSTS));
       const postsSnapshot = await getDocs(postsQuery);
       
       const posts = [];
       postsSnapshot.forEach(doc => {
         posts.push({ id: doc.id, ...doc.data() });
       });
+
+      // Sort in memory
+      posts.sort((a, b) => this._getTimestampDate(b.createdAt) - this._getTimestampDate(a.createdAt));
 
       this.renderPostsList(posts);
     } catch (error) {
@@ -252,8 +368,13 @@ class AdminDashboard {
 
   // Render posts list
   renderPostsList(posts) {
-    const container = document.querySelector('#section-posts .table tbody');
+    const container = document.querySelector('#section-posts table:last-of-type tbody');
     if (!container) return;
+
+    if (posts.length === 0) {
+      container.innerHTML = '<tr><td colspan="5" class="text-center py-4">No posts found</td></tr>';
+      return;
+    }
 
     container.innerHTML = '';
     posts.forEach(post => {
@@ -264,12 +385,11 @@ class AdminDashboard {
           <div class="small text-muted">Slug: ${post.slug}</div>
         </td>
         <td><span class="badge ${this.getStatusBadgeClass(post.status)}">${post.status}</span></td>
-        <td>${post.category?.name || 'Uncategorized'}</td>
-        <td>${post.views || 0}</td>
-        <td>${this.formatDate(post.updatedAt)}</td>
+        <td>${post.author?.name || 'Unknown'}</td>
+        <td>${post.status === 'published' ? this.formatDate(post.createdAt?.toDate ? post.createdAt.toDate() : post.createdAt) : '—'}</td>
         <td class="text-end">
           <button class="btn btn-sm btn-outline-secondary me-1" onclick="adminDashboard.editPost('${post.id}')">Edit</button>
-          <button class="btn btn-sm btn-outline-secondary" onclick="adminDashboard.deletePost('${post.id}')">Delete</button>
+          <button class="btn btn-sm btn-outline-danger" onclick="adminDashboard.deletePost('${post.id}')">Delete</button>
         </td>
       `;
       container.appendChild(row);
@@ -279,13 +399,9 @@ class AdminDashboard {
   // Load categories
   async loadCategories() {
     try {
-      const categoriesQuery = query(collection(db, collectionNames.CATEGORIES), orderBy('order', 'asc'));
-      const categoriesSnapshot = await getDocs(categoriesQuery);
-      
-      const categories = [];
-      categoriesSnapshot.forEach(doc => {
-        categories.push({ id: doc.id, ...doc.data() });
-      });
+      const categoriesSnapshot = await getDocs(collection(db, collectionNames.CATEGORIES));
+      const categories = categoriesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      categories.sort((a, b) => a.name.localeCompare(b.name));
 
       this.renderCategoriesList(categories);
     } catch (error) {
@@ -293,30 +409,91 @@ class AdminDashboard {
     }
   }
 
+  renderCategoriesList(categories) {
+    const container = document.querySelector('#section-categories table tbody');
+    if (!container) return;
+    
+    if (categories.length === 0) {
+      container.innerHTML = '<tr><td colspan="3" class="text-center py-4">No categories yet</td></tr>';
+      return;
+    }
+
+    container.innerHTML = categories.map(cat => `
+      <tr>
+        <td>${cat.name}</td>
+        <td>0</td>
+        <td class="text-end">
+          <button class="btn btn-sm btn-outline-secondary me-1">Edit</button>
+          <button class="btn btn-sm btn-outline-danger">Delete</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  // Load tags
+  async loadTags() {
+    try {
+      const tagsSnapshot = await getDocs(collection(db, collectionNames.TAGS));
+      const tags = tagsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      tags.sort((a, b) => a.name.localeCompare(b.name));
+
+      this.renderTagsList(tags);
+    } catch (error) {
+      console.error('Error loading tags:', error);
+    }
+  }
+
+  renderTagsList(tags) {
+    const container = document.querySelectorAll('#section-categories table tbody')[1];
+    if (!container) return;
+    
+    if (tags.length === 0) {
+      container.innerHTML = '<tr><td colspan="3" class="text-center py-4">No tags yet</td></tr>';
+      return;
+    }
+
+    container.innerHTML = tags.map(tag => `
+      <tr>
+        <td>
+          <span class="badge" style="background-color: ${tag.color || '#6c757d'}">${tag.name}</span>
+        </td>
+        <td>0</td>
+        <td class="text-end">
+          <button class="btn btn-sm btn-outline-secondary me-1">Edit</button>
+          <button class="btn btn-sm btn-outline-danger">Delete</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
   // Load users
   async loadUsers() {
     try {
-      const users = await authService.getAllUsers();
+      const usersQuery = query(collection(db, collectionNames.USERS));
+      const snapshot = await getDocs(usersQuery);
+      const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       this.renderUsersList(users);
     } catch (error) {
       console.error('Error loading users:', error);
     }
   }
 
+  renderUsersList(users) {}
+
   // Utility methods
   getStatusBadgeClass(status) {
     switch (status) {
-      case 'published': return 'badge-status-published';
-      case 'draft': return 'badge-status-draft';
-      case 'scheduled': return 'badge-status-scheduled';
-      default: return 'badge-status-draft';
+      case 'published': return 'bg-success';
+      case 'draft': return 'bg-secondary';
+      case 'scheduled': return 'bg-warning text-dark';
+      default: return 'bg-secondary';
     }
   }
 
   formatDate(date) {
     if (!date) return '—';
     const d = new Date(date);
-    return d.toLocaleDateString();
+    return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 
   formatNumber(num) {
@@ -328,29 +505,85 @@ class AdminDashboard {
 
   // Event setup methods
   setupPostEvents() {
-    // Add new post button
-    const addPostBtn = document.getElementById('addPostBtn');
-    if (addPostBtn) {
-      addPostBtn.addEventListener('click', () => this.showPostForm());
-    }
-
     // Post form submission
     const postForm = document.getElementById('postForm');
     if (postForm) {
       postForm.addEventListener('submit', (e) => this.handlePostSubmit(e));
     }
 
-    // Category and tag management
-    this.setupCategoryManagement();
-    this.setupTagManagement();
+    // Auto-slug generation
+    const titleInput = document.getElementById('postTitle');
+    const slugInput = document.getElementById('postSlug');
+    if (titleInput && slugInput) {
+      titleInput.addEventListener('input', (e) => {
+        if (!slugInput.dataset.manual) {
+          slugInput.value = this.generateSlug(e.target.value);
+        }
+      });
+      slugInput.addEventListener('input', () => {
+        slugInput.dataset.manual = 'true';
+      });
+    }
+
+    // Image preview
+    const imageInput = document.getElementById('postImage');
+    const imagePreview = document.getElementById('imagePreview');
+    if (imageInput && imagePreview) {
+      imageInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            imagePreview.querySelector('img').src = event.target.result;
+            imagePreview.classList.remove('d-none');
+          };
+          reader.readAsDataURL(file);
+        } else {
+          imagePreview.classList.add('d-none');
+        }
+      });
+    }
+
+    // Save as Draft button
+    const saveDraftBtn = document.getElementById('saveDraftBtn');
+    if (saveDraftBtn && postForm) {
+      saveDraftBtn.addEventListener('click', () => {
+        const draftRadio = document.getElementById('statusDraft');
+        if (draftRadio) draftRadio.checked = true;
+        postForm.requestSubmit();
+      });
+    }
   }
 
-  // Show post creation form
-  showPostForm() {
-    const modal = document.getElementById('postModal');
-    if (modal) {
-      modal.style.display = 'block';
-      this.loadFormOptions();
+  generateSlug(text) {
+    return text
+      .toString()
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w-]+/g, '')
+      .replace(/--+/g, '-');
+  }
+
+  _getTimestampDate(timestamp) {
+    if (!timestamp) return new Date(0);
+    if (timestamp.toDate) return timestamp.toDate();
+    if (timestamp instanceof Date) return timestamp;
+    if (typeof timestamp === 'string' || typeof timestamp === 'number') return new Date(timestamp);
+    return new Date(); // Default to now for new posts pending server timestamp
+  }
+
+  resetPostForm() {
+    const form = document.getElementById('postForm');
+    if (form) {
+      form.reset();
+      document.getElementById('postId').value = '';
+      const slugInput = document.getElementById('postSlug');
+      if (slugInput) slugInput.dataset.manual = '';
+      const imagePreview = document.getElementById('imagePreview');
+      if (imagePreview) imagePreview.classList.add('d-none');
+      const statusDraft = document.getElementById('statusDraft');
+      if (statusDraft) statusDraft.checked = true;
     }
   }
 
@@ -358,14 +591,15 @@ class AdminDashboard {
   async loadFormOptions() {
     try {
       // Load categories
-      const categoriesQuery = query(collection(db, collectionNames.CATEGORIES), orderBy('name', 'asc'));
-      const categoriesSnapshot = await getDocs(categoriesQuery);
+      const categoriesSnapshot = await getDocs(collection(db, collectionNames.CATEGORIES));
       const categoriesSelect = document.getElementById('postCategory');
       
       if (categoriesSelect) {
+        const categories = categoriesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        categories.sort((a, b) => a.name.localeCompare(b.name));
+
         categoriesSelect.innerHTML = '<option value="">Select Category</option>';
-        categoriesSnapshot.forEach(doc => {
-          const category = { id: doc.id, ...doc.data() };
+        categories.forEach(category => {
           const option = document.createElement('option');
           option.value = category.id;
           option.textContent = category.name;
@@ -374,19 +608,23 @@ class AdminDashboard {
       }
 
       // Load tags
-      const tagsQuery = query(collection(db, collectionNames.TAGS), orderBy('name', 'asc'));
-      const tagsSnapshot = await getDocs(tagsQuery);
+      const tagsSnapshot = await getDocs(collection(db, collectionNames.TAGS));
       const tagsContainer = document.getElementById('postTags');
       
       if (tagsContainer) {
+        const tags = tagsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        tags.sort((a, b) => a.name.localeCompare(b.name));
+
         tagsContainer.innerHTML = '';
-        tagsSnapshot.forEach(doc => {
-          const tag = { id: doc.id, ...doc.data() };
+        if (tags.length === 0) {
+          tagsContainer.innerHTML = '<div class="small text-muted">No tags available</div>';
+        }
+        tags.forEach(tag => {
           const checkbox = document.createElement('div');
-          checkbox.className = 'form-check form-check-inline';
+          checkbox.className = 'form-check';
           checkbox.innerHTML = `
-            <input class="form-check-input" type="checkbox" id="tag-${tag.id}" value="${tag.id}">
-            <label class="form-check-label" for="tag-${tag.id}">${tag.name}</label>
+            <input class="form-check-input" type="checkbox" name="postTags" id="tag-${tag.id}" value="${tag.id}">
+            <label class="form-check-label small" for="tag-${tag.id}">${tag.name}</label>
           `;
           tagsContainer.appendChild(checkbox);
         });
@@ -400,31 +638,48 @@ class AdminDashboard {
   async handlePostSubmit(e) {
     e.preventDefault();
     
-    const formData = new FormData(e.target);
+    const form = e.target;
+    const formData = new FormData(form);
+    const postId = formData.get('postId');
+    
+    // Check if category is selected
+    const categoryId = formData.get('postCategory');
+    let categoryObj = { id: '', name: 'Uncategorized' };
+    if (categoryId) {
+      const categorySelect = document.getElementById('postCategory');
+      categoryObj = {
+        id: categoryId,
+        name: categorySelect.options[categorySelect.selectedIndex].text
+      };
+    }
+
     const postData = {
       title: formData.get('postTitle'),
       slug: formData.get('postSlug'),
       excerpt: formData.get('postExcerpt'),
       content: formData.get('postContent'),
       status: formData.get('postStatus'),
-      category: {
-        id: formData.get('postCategory'),
-        name: document.querySelector(`#postCategory option[value="${formData.get('postCategory')}"]`)?.textContent || ''
-      },
-      tags: Array.from(document.querySelectorAll('#postTags input[type="checkbox"]:checked')).map(cb => cb.value),
-      author: {
-        id: this.currentUser.uid,
-        name: this.currentUser.displayName || this.currentUser.email,
-        email: this.currentUser.email
-      },
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-      views: 0,
-      likes: 0,
-      commentsCount: 0
+      category: categoryObj,
+      tags: Array.from(form.querySelectorAll('input[name="postTags"]:checked')).map(cb => cb.value),
+      updatedAt: serverTimestamp()
     };
 
+    // Add author info for new posts
+    if (!postId) {
+      postData.author = {
+        id: this.currentUser.uid,
+        name: this.currentUser.displayName || this.currentUser.email.split('@')[0],
+        email: this.currentUser.email
+      };
+      postData.createdAt = serverTimestamp();
+      postData.views = 0;
+      postData.likes = 0;
+      postData.commentsCount = 0;
+    }
+
     try {
+      this.setLoading(true);
+
       // Handle featured image upload
       const imageFile = document.getElementById('postImage').files[0];
       if (imageFile) {
@@ -432,19 +687,33 @@ class AdminDashboard {
         postData.featuredImage = imageUrl;
       }
 
-      // Save post
-      const docRef = await addDoc(collection(db, collectionNames.POSTS), postData);
+      if (postId) {
+        console.log('Updating post:', postId, postData);
+        await updateDoc(doc(db, collectionNames.POSTS, postId), postData);
+        this.showNotification('Post updated successfully!', 'success');
+      } else {
+        console.log('Creating new post:', postData);
+        const docRef = await addDoc(collection(db, collectionNames.POSTS), postData);
+        console.log('Post created with ID:', docRef.id);
+        this.showNotification('Post published successfully!', 'success');
+      }
       
-      // Show success message
-      this.showNotification('Post created successfully!', 'success');
-      
-      // Close modal and refresh posts list
-      this.closePostModal();
-      this.loadPosts();
+      this.resetPostForm();
+      this.showSection('section-overview');
       
     } catch (error) {
-      console.error('Error creating post:', error);
-      this.showNotification('Error creating post: ' + error.message, 'error');
+      console.error('Error saving post:', error);
+      this.showNotification('Error saving post: ' + error.message, 'error');
+    } finally {
+      this.setLoading(false);
+    }
+  }
+
+  setLoading(isLoading) {
+    const publishBtn = document.getElementById('publishBtn');
+    if (publishBtn) {
+      publishBtn.disabled = isLoading;
+      publishBtn.innerHTML = isLoading ? '<span class="spinner-border spinner-border-sm me-2"></span>Saving...' : 'Publish';
     }
   }
 
@@ -455,19 +724,11 @@ class AdminDashboard {
     return await getDownloadURL(snapshot.ref);
   }
 
-  // Close post modal
-  closePostModal() {
-    const modal = document.getElementById('postModal');
-    if (modal) {
-      modal.style.display = 'none';
-    }
-  }
-
   // Show notification
   showNotification(message, type = 'info') {
     const notification = document.createElement('div');
-    notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show position-fixed`;
-    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.className = `alert alert-${type === 'error' ? 'danger' : (type === 'success' ? 'success' : 'info')} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
     notification.innerHTML = `
       ${message}
       <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -475,28 +736,144 @@ class AdminDashboard {
     document.body.appendChild(notification);
     
     setTimeout(() => {
-      notification.remove();
-    }, 3000);
+      notification.classList.remove('show');
+      setTimeout(() => notification.remove(), 500);
+    }, 4000);
   }
 
-  setupCategoryEvents() {
-    // Add event listeners for category management
-  }
-
-  setupUserEvents() {
-    // Add event listeners for user management
-  }
-
-  // CRUD operations (to be implemented)
+  // CRUD operations
   async editPost(postId) {
-    console.log('Edit post:', postId);
+    try {
+      this.showSection('section-posts');
+      this.setLoading(true);
+      
+      const postDoc = await getDoc(doc(db, collectionNames.POSTS, postId));
+      if (!postDoc.exists()) {
+        this.showNotification('Post not found', 'error');
+        return;
+      }
+
+      const post = postDoc.data();
+      
+      // Fill form
+      document.getElementById('postId').value = postId;
+      document.getElementById('postTitle').value = post.title;
+      document.getElementById('postSlug').value = post.slug;
+      document.getElementById('postSlug').dataset.manual = 'true';
+      document.getElementById('postExcerpt').value = post.excerpt || '';
+      document.getElementById('postContent').value = post.content;
+      document.getElementById('postCategory').value = post.category?.id || '';
+      
+      // Select tags
+      const tagCheckboxes = document.querySelectorAll('input[name="postTags"]');
+      tagCheckboxes.forEach(cb => {
+        cb.checked = post.tags?.includes(cb.value);
+      });
+
+      // Status
+      const statusRadio = document.querySelector(`input[name="postStatus"][value="${post.status}"]`);
+      if (statusRadio) statusRadio.checked = true;
+
+      // Image
+      if (post.featuredImage) {
+        const imagePreview = document.getElementById('imagePreview');
+        imagePreview.querySelector('img').src = post.featuredImage;
+        imagePreview.classList.remove('d-none');
+      } else {
+        document.getElementById('imagePreview').classList.add('d-none');
+      }
+
+    } catch (error) {
+      console.error('Error loading post for edit:', error);
+      this.showNotification('Error loading post: ' + error.message, 'error');
+    } finally {
+      this.setLoading(false);
+    }
   }
 
   async deletePost(postId) {
-    console.log('Delete post:', postId);
+    if (!confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      await deleteDoc(doc(db, collectionNames.POSTS, postId));
+      this.showNotification('Post deleted successfully', 'success');
+      this.loadPosts();
+      if (this.currentSection === 'section-overview') {
+        this.loadOverview();
+      }
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      this.showNotification('Error deleting post: ' + error.message, 'error');
+    }
   }
+
+  setupCategoryManagement() {
+    const catForm = document.querySelector('#section-categories form');
+    if (catForm) {
+      catForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const nameInput = catForm.querySelector('input[placeholder="Category name"]');
+        const slugInput = catForm.querySelector('input[placeholder="productivity"]');
+        const descInput = catForm.querySelector('textarea');
+        
+        if (!nameInput || !slugInput) return;
+
+        try {
+          await addDoc(collection(db, collectionNames.CATEGORIES), {
+            name: nameInput.value,
+            slug: slugInput.value,
+            description: descInput.value,
+            order: 0,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          });
+          this.showNotification('Category added', 'success');
+          catForm.reset();
+          this.loadCategories();
+        } catch (err) {
+          console.error(err);
+        }
+      });
+    }
+  }
+
+  setupTagManagement() {
+    const tagForm = document.querySelectorAll('#section-categories form')[1];
+    if (tagForm) {
+      tagForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const nameInput = tagForm.querySelector('input[placeholder="Tag name"]');
+        const slugInput = tagForm.querySelector('input[placeholder="tag-slug"]');
+        const colorInput = tagForm.querySelector('input[type="color"]');
+        
+        if (!nameInput || !slugInput) return;
+
+        try {
+          await addDoc(collection(db, collectionNames.TAGS), {
+            name: nameInput.value,
+            slug: slugInput.value,
+            color: colorInput.value,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          });
+          this.showNotification('Tag added', 'success');
+          tagForm.reset();
+          this.loadFormOptions();
+        } catch (err) {
+          console.error(err);
+        }
+      });
+    }
+  }
+
+  setupCategoryEvents() {
+    this.setupCategoryManagement();
+    this.setupTagManagement();
+  }
+  setupUserEvents() {}
 }
 
-// Initialize dashboard
 const adminDashboard = new AdminDashboard();
-window.adminDashboard = adminDashboard;
+window.adminDashboard = adminDashboard;

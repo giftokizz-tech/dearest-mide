@@ -12,13 +12,23 @@ class BlogService {
     this.currentTag = null;
   }
 
+  // Utility to convert various date formats to JS Date
+  _getTimestampDate(timestamp) {
+    if (!timestamp) return new Date(0);
+    if (timestamp.toDate) return timestamp.toDate();
+    if (timestamp instanceof Date) return timestamp;
+    if (typeof timestamp === 'string' || typeof timestamp === 'number') return new Date(timestamp);
+    return new Date(0);
+  }
+
   // Get published posts
-  async getPublishedPosts(category = null, tag = null, page = 1) {
+  async getPublishedPosts(category = null, tag = null, limitCount = 10) {
     try {
+      // NOTE: We're fetching without orderBy first to avoid composite index requirements
+      // which can be frustrating during initial setup. We'll sort in memory for now.
       let postsQuery = query(
         collection(db, collectionNames.POSTS),
-        where('status', '==', 'published'),
-        orderBy('createdAt', 'desc')
+        where('status', '==', 'published')
       );
 
       if (category) {
@@ -29,10 +39,6 @@ class BlogService {
         postsQuery = query(postsQuery, where('tags', 'array-contains', tag));
       }
 
-      if (page > 1 && this.lastVisible) {
-        postsQuery = query(postsQuery, startAfter(this.lastVisible));
-      }
-
       const postsSnapshot = await getDocs(postsQuery);
       const posts = [];
       
@@ -40,12 +46,11 @@ class BlogService {
         posts.push({ id: doc.id, ...doc.data() });
       });
 
-      // Update last visible for pagination
-      if (postsSnapshot.docs.length > 0) {
-        this.lastVisible = postsSnapshot.docs[postsSnapshot.docs.length - 1];
-      }
+      // Sort by createdAt descending (most recent first)
+      posts.sort((a, b) => this._getTimestampDate(b.createdAt) - this._getTimestampDate(a.createdAt));
 
-      return posts;
+      // Limit results if requested
+      return posts.slice(0, limitCount);
     } catch (error) {
       console.error('Error fetching posts:', error);
       return [];
@@ -78,17 +83,16 @@ class BlogService {
   // Get all categories
   async getCategories() {
     try {
-      const categoriesQuery = query(
-        collection(db, collectionNames.CATEGORIES),
-        orderBy('order', 'asc')
-      );
-      
+      const categoriesQuery = query(collection(db, collectionNames.CATEGORIES));
       const categoriesSnapshot = await getDocs(categoriesQuery);
       const categories = [];
       
       categoriesSnapshot.forEach(doc => {
         categories.push({ id: doc.id, ...doc.data() });
       });
+
+      // Sort locally by order or name
+      categories.sort((a, b) => (a.order || 0) - (b.order || 0));
 
       return categories;
     } catch (error) {
@@ -100,11 +104,7 @@ class BlogService {
   // Get all tags
   async getTags() {
     try {
-      const tagsQuery = query(
-        collection(db, collectionNames.TAGS),
-        orderBy('name', 'asc')
-      );
-      
+      const tagsQuery = query(collection(db, collectionNames.TAGS));
       const tagsSnapshot = await getDocs(tagsQuery);
       const tags = [];
       
@@ -112,6 +112,7 @@ class BlogService {
         tags.push({ id: doc.id, ...doc.data() });
       });
 
+      tags.sort((a, b) => a.name.localeCompare(b.name));
       return tags;
     } catch (error) {
       console.error('Error fetching tags:', error);
@@ -125,8 +126,7 @@ class BlogService {
       const commentsQuery = query(
         collection(db, collectionNames.COMMENTS),
         where('postId', '==', postId),
-        where('status', '==', 'approved'),
-        orderBy('createdAt', 'asc')
+        where('status', '==', 'approved')
       );
       
       const commentsSnapshot = await getDocs(commentsQuery);
@@ -135,6 +135,8 @@ class BlogService {
       commentsSnapshot.forEach(doc => {
         comments.push({ id: doc.id, ...doc.data() });
       });
+
+      comments.sort((a, b) => this._getTimestampDate(a.createdAt) - this._getTimestampDate(b.createdAt));
 
       return comments;
     } catch (error) {
@@ -157,8 +159,6 @@ class BlogService {
       };
 
       const docRef = await addDoc(collection(db, collectionNames.COMMENTS), comment);
-      
-      // Update post comments count
       await this.updatePostCommentsCount(postId);
       
       return { success: true, id: docRef.id };
@@ -193,8 +193,6 @@ class BlogService {
   // Search posts
   async searchPosts(searchTerm, category = null, tag = null) {
     try {
-      // Note: Firestore doesn't support full-text search natively
-      // This is a basic implementation that searches in title and content
       let postsQuery = query(
         collection(db, collectionNames.POSTS),
         where('status', '==', 'published')
@@ -214,20 +212,15 @@ class BlogService {
       postsSnapshot.forEach(doc => {
         const postData = { id: doc.id, ...doc.data() };
         
-        // Basic text search
         if (searchTerm) {
           const searchText = `${postData.title} ${postData.content} ${postData.excerpt}`.toLowerCase();
-          if (!searchText.includes(searchTerm.toLowerCase())) {
-            return;
-          }
+          if (!searchText.includes(searchTerm.toLowerCase())) return;
         }
         
         posts.push(postData);
       });
 
-      // Sort by date descending
-      posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
+      posts.sort((a, b) => this._getTimestampDate(b.createdAt) - this._getTimestampDate(a.createdAt));
       return posts;
     } catch (error) {
       console.error('Error searching posts:', error);
@@ -236,51 +229,13 @@ class BlogService {
   }
 
   // Get featured posts
-  async getFeaturedPosts(limit = 3) {
-    try {
-      const postsQuery = query(
-        collection(db, collectionNames.POSTS),
-        where('status', '==', 'published'),
-        orderBy('createdAt', 'desc'),
-        limit(limit)
-      );
-      
-      const postsSnapshot = await getDocs(postsQuery);
-      const posts = [];
-      
-      postsSnapshot.forEach(doc => {
-        posts.push({ id: doc.id, ...doc.data() });
-      });
-
-      return posts;
-    } catch (error) {
-      console.error('Error fetching featured posts:', error);
-      return [];
-    }
+  async getFeaturedPosts(limitCount = 3) {
+    return this.getPublishedPosts(null, null, limitCount);
   }
 
   // Get recent posts
-  async getRecentPosts(limit = 5) {
-    try {
-      const postsQuery = query(
-        collection(db, collectionNames.POSTS),
-        where('status', '==', 'published'),
-        orderBy('createdAt', 'desc'),
-        limit(limit)
-      );
-      
-      const postsSnapshot = await getDocs(postsQuery);
-      const posts = [];
-      
-      postsSnapshot.forEach(doc => {
-        posts.push({ id: doc.id, ...doc.data() });
-      });
-
-      return posts;
-    } catch (error) {
-      console.error('Error fetching recent posts:', error);
-      return [];
-    }
+  async getRecentPosts(limitCount = 5) {
+    return this.getPublishedPosts(null, null, limitCount);
   }
 
   // Increment post views
@@ -302,56 +257,15 @@ class BlogService {
   }
 
   // Get posts by category
-  async getPostsByCategory(categoryId, limit = 10) {
-    try {
-      const postsQuery = query(
-        collection(db, collectionNames.POSTS),
-        where('status', '==', 'published'),
-        where('category.id', '==', categoryId),
-        orderBy('createdAt', 'desc'),
-        limit(limit)
-      );
-      
-      const postsSnapshot = await getDocs(postsQuery);
-      const posts = [];
-      
-      postsSnapshot.forEach(doc => {
-        posts.push({ id: doc.id, ...doc.data() });
-      });
-
-      return posts;
-    } catch (error) {
-      console.error('Error fetching posts by category:', error);
-      return [];
-    }
+  async getPostsByCategory(categoryId, limitCount = 10) {
+    return this.getPublishedPosts(categoryId, null, limitCount);
   }
 
   // Get posts by tag
-  async getPostsByTag(tagId, limit = 10) {
-    try {
-      const postsQuery = query(
-        collection(db, collectionNames.POSTS),
-        where('status', '==', 'published'),
-        where('tags', 'array-contains', tagId),
-        orderBy('createdAt', 'desc'),
-        limit(limit)
-      );
-      
-      const postsSnapshot = await getDocs(postsQuery);
-      const posts = [];
-      
-      postsSnapshot.forEach(doc => {
-        posts.push({ id: doc.id, ...doc.data() });
-      });
-
-      return posts;
-    } catch (error) {
-      console.error('Error fetching posts by tag:', error);
-      return [];
-    }
+  async getPostsByTag(tagId, limitCount = 10) {
+    return this.getPublishedPosts(null, tagId, limitCount);
   }
 }
 
-// Create and export singleton instance
 const blogService = new BlogService();
 export default blogService;

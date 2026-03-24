@@ -95,48 +95,10 @@
         <div class="container">
             <h2 class="section-title text-center mb-5" data-aos="fade-up">Featured Articles</h2>
             
-            <div class="row g-4 mb-5">
-                <!-- Featured Post 1 -->
-                <div class="col-lg-6" data-aos="fade-right" data-aos-duration="800">
-                    <div class="featured-card overflow-hidden">
-                        <div class="featured-image-wrapper">
-                            <img src="https://images.unsplash.com/photo-1633356122544-f134324ef6db?w=800&h=400&fit=crop" class="img-fluid featured-image" alt="Featured Post 1">
-                            <div class="overlay-gradient"></div>
-                            <span class="badge bg-primary position-absolute top-3 start-3">Featured</span>
-                        </div>
-                        <div class="featured-content p-4">
-                            <h3 class="fw-bold mb-2">No Featured Posts Yet</h3>
-                            <p class="text-muted mb-3">Create your first post in the admin dashboard to feature it here.</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="author-info">
-                                    <img src="https://i.pravatar.cc/40?img=1" class="rounded-circle me-2" alt="Author">
-                                    <small class="text-muted">Admin</small>
-                                </div>
-                                <a href="../admin/index.html" class="btn btn-primary btn-sm read-more-btn">Go to Admin <i class="fas fa-arrow-right ms-2"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Featured Post 2 -->
-                <div class="col-lg-6" data-aos="fade-left" data-aos-duration="800">
-                    <div class="featured-card overflow-hidden">
-                        <div class="featured-image-wrapper">
-                            <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=400&fit=crop" class="img-fluid featured-image" alt="Featured Post 2">
-                            <div class="overlay-gradient"></div>
-                            <span class="badge bg-primary position-absolute top-3 start-3">Featured</span>
-                        </div>
-                        <div class="featured-content p-4">
-                            <h3 class="fw-bold mb-2">Start Creating Content</h3>
-                            <p class="text-muted mb-3">Use the admin dashboard to create and manage your blog posts.</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="author-info">
-                                    <img src="https://i.pravatar.cc/40?img=2" class="rounded-circle me-2" alt="Author">
-                                    <small class="text-muted">Admin</small>
-                                </div>
-                                <a href="../admin/index.html" class="btn btn-primary btn-sm read-more-btn">Go to Admin <i class="fas fa-arrow-right ms-2"></i></a>
-                            </div>
-                        </div>
+            <div class="row g-4 mb-5" id="featuredPostsGrid">
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
             </div>
@@ -148,52 +110,10 @@
         <div class="container">
             <h2 class="section-title text-center mb-5" data-aos="fade-up">Explore by Category</h2>
             
-            <div class="row g-4">
-                <!-- Category Card 1 -->
-                <div class="col-md-6 col-lg-3" data-aos="flip-left" data-aos-duration="800">
-                    <div class="category-card text-center p-4 rounded-3">
-                        <div class="category-icon mb-3">
-                            <i class="fas fa-laptop-code fa-3x text-primary"></i>
-                        </div>
-                        <h4 class="fw-bold mb-2">Technology</h4>
-                        <p class="text-muted mb-3">No Articles Yet</p>
-                        <a href="pages/search.html?category=technology" class="stretched-link"></a>
-                    </div>
-                </div>
-
-                <!-- Category Card 2 -->
-                <div class="col-md-6 col-lg-3" data-aos="flip-left" data-aos-duration="800" data-aos-delay="100">
-                    <div class="category-card text-center p-4 rounded-3">
-                        <div class="category-icon mb-3">
-                            <i class="fas fa-heart fa-3x text-danger"></i>
-                        </div>
-                        <h4 class="fw-bold mb-2">Lifestyle</h4>
-                        <p class="text-muted mb-3">No Articles Yet</p>
-                        <a href="pages/search.html?category=lifestyle" class="stretched-link"></a>
-                    </div>
-                </div>
-
-                <!-- Category Card 3 -->
-                <div class="col-md-6 col-lg-3" data-aos="flip-left" data-aos-duration="800" data-aos-delay="200">
-                    <div class="category-card text-center p-4 rounded-3">
-                        <div class="category-icon mb-3">
-                            <i class="fas fa-globe fa-3x text-success"></i>
-                        </div>
-                        <h4 class="fw-bold mb-2">Travel</h4>
-                        <p class="text-muted mb-3">No Articles Yet</p>
-                        <a href="pages/search.html?category=travel" class="stretched-link"></a>
-                    </div>
-                </div>
-
-                <!-- Category Card 4 -->
-                <div class="col-md-6 col-lg-3" data-aos="flip-left" data-aos-duration="800" data-aos-delay="300">
-                    <div class="category-card text-center p-4 rounded-3">
-                        <div class="category-icon mb-3">
-                            <i class="fas fa-book-open fa-3x text-warning"></i>
-                        </div>
-                        <h4 class="fw-bold mb-2">Personal Growth</h4>
-                        <p class="text-muted mb-3">No Articles Yet</p>
-                        <a href="pages/search.html?category=growth" class="stretched-link"></a>
+            <div class="row g-4" id="categoriesGrid">
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
             </div>
@@ -206,15 +126,9 @@
             <h2 class="section-title text-center mb-5" data-aos="fade-up">Latest Articles</h2>
             
             <div class="row g-4" id="postsGrid">
-                <!-- No posts yet message -->
                 <div class="col-12 text-center py-5">
-                    <div class="empty-state">
-                        <i class="fas fa-newspaper fa-3x text-muted mb-3"></i>
-                        <h4 class="text-muted mb-2">No Articles Yet</h4>
-                        <p class="text-muted mb-4">Create your first post in the admin dashboard to see it here.</p>
-                        <a href="../admin/index.html" class="btn btn-primary btn-lg">
-                            <i class="fas fa-plus me-2"></i> Create Your First Post
-                        </a>
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
             </div>
@@ -319,5 +233,6 @@
     
     <!-- Custom JS -->
     <script src="js/app.js"></script>
+    <script type="module" src="js/firebase-integration.js"></script>
 </body>
 </html>
