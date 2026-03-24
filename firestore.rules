@@ -1,0 +1,217 @@
+// Firestore Security Rules for Dearest Mide Blog
+// These rules define who can read and write to your Firestore database
+
+rules_version = '2';
+service cloud.firestore {
+  // Helper functions for authentication and authorization
+  function isAuthenticated() {
+    return request.auth != null;
+  }
+  
+  function isAdmin() {
+    return isAuthenticated() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+  }
+  
+  function isEditor() {
+    return isAuthenticated() && (
+      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'editor']
+    );
+  }
+  
+  function isAuthor() {
+    return isAuthenticated() && (
+      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'editor', 'author']
+    );
+  }
+  
+  function isPostAuthor(postId) {
+    return isAuthenticated() && (
+      get(/databases/$(database)/documents/posts/$(postId)).data.author.id == request.auth.uid
+    );
+  }
+  
+  function isActiveUser() {
+    return isAuthenticated() && (
+      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isActive == true
+    );
+  }
+
+  // Users collection - Manage user accounts and permissions
+  match /users/{userId} {
+    // Allow users to read their own profile
+    allow get: if isAuthenticated() && request.auth.uid == userId;
+    
+    // Allow admins to read all user profiles
+    allow list: if isAdmin();
+    
+    // Allow users to update their own profile (but not role or permissions)
+    allow update: if isAuthenticated() && request.auth.uid == userId && 
+      // Only allow updating specific fields
+      request.resource.data.keys().hasOnly([
+        'displayName', 'photoURL', 'lastLoginAt'
+      ]);
+    
+    // Allow admins to manage all user fields
+    allow create, update: if isAdmin();
+    
+    // Deny delete - users should be deactivated instead
+    allow delete: if false;
+  }
+
+  // Posts collection - Blog post management
+  match /posts/{postId} {
+    // Allow reading published posts by anyone
+    allow get, list: if resource.data.status == 'published' || 
+                      (isAuthenticated() && isActiveUser());
+    
+    // Allow authenticated users to list their own posts
+    allow list: if isAuthenticated() && isActiveUser();
+    
+    // Allow authors to create posts
+    allow create: if isAuthor() && isActiveUser();
+    
+    // Allow authors to update their own draft posts
+    // Allow editors and admins to update any post
+    allow update: if (
+      (isAuthor() && isPostAuthor(postId) && resource.data.status == 'draft') ||
+      isEditor()
+    ) && isActiveUser();
+    
+    // Allow editors and admins to delete posts
+    // Authors can only delete their own draft posts
+    allow delete: if (
+      (isAuthor() && isPostAuthor(postId) && resource.data.status == 'draft') ||
+      isEditor()
+    ) && isActiveUser();
+  }
+
+  // Categories collection - Category management
+  match /categories/{categoryId} {
+    // Allow reading categories by anyone
+    allow get, list: if true;
+    
+    // Allow editors and admins to manage categories
+    allow create, update, delete: if isEditor() && isActiveUser();
+  }
+
+  // Tags collection - Tag management
+  match /tags/{tagId} {
+    // Allow reading tags by anyone
+    allow get, list: if true;
+    
+    // Allow editors and admins to manage tags
+    allow create, update, delete: if isEditor() && isActiveUser();
+  }
+
+  // Comments collection - Comment management
+  match /comments/{commentId} {
+    // Allow reading approved comments by anyone
+    allow get, list: if resource.data.status == 'approved' || 
+                      (isAuthenticated() && isActiveUser());
+    
+    // Allow creating comments by authenticated users
+    allow create: if isAuthenticated() && isActiveUser();
+    
+    // Allow comment author to update their own pending comments
+    // Allow editors and admins to update any comment
+    allow update: if (
+      (isAuthenticated() && request.auth.uid == resource.data.author.id && 
+       resource.data.status == 'pending') ||
+      isEditor()
+    ) && isActiveUser();
+    
+    // Allow comment author to delete their own pending comments
+    // Allow editors and admins to delete any comment
+    allow delete: if (
+      (isAuthenticated() && request.auth.uid == resource.data.author.id && 
+       resource.data.status == 'pending') ||
+      isEditor()
+    ) && isActiveUser();
+  }
+
+  // Media collection - File uploads and management
+  match /media/{mediaId} {
+    // Allow reading public media files
+    allow get, list: if resource.data.isPublic == true || 
+                      (isAuthenticated() && isActiveUser());
+    
+    // Allow authors to upload media
+    allow create: if isAuthor() && isActiveUser();
+    
+    // Allow media owner or editors to update/delete
+    allow update, delete: if (
+      (isAuthenticated() && request.auth.uid == resource.data.uploadedBy) ||
+      isEditor()
+    ) && isActiveUser();
+  }
+
+  // Analytics collection - Read-only for admins
+  match /analytics/{analyticsId} {
+    // Allow admins to read analytics
+    allow get, list: if isAdmin() && isActiveUser();
+    
+    // Allow system to create analytics data
+    allow create: if request.auth.token.admin == true;
+    
+    // Deny updates and deletes by anyone except system
+    allow update, delete: if false;
+  }
+
+  // Global rules for data validation
+  function validatePostData() {
+    return request.resource.data.keys().hasAll([
+      'title', 'slug', 'content', 'status', 'author', 'category', 'tags'
+    ]) &&
+    request.resource.data.title is string &&
+    request.resource.data.title.size() > 0 &&
+    request.resource.data.title.size() < 200 &&
+    request.resource.data.slug is string &&
+    request.resource.data.slug.size() > 0 &&
+    request.resource.data.content is string &&
+    request.resource.data.content.size() > 0 &&
+    request.resource.data.status in ['draft', 'published', 'scheduled'] &&
+    request.resource.data.author is map &&
+    request.resource.data.author.keys().hasAll(['id', 'name', 'email']) &&
+    request.resource.data.category is map &&
+    request.resource.data.category.keys().hasAll(['id', 'name']) &&
+    request.resource.data.tags is list;
+  }
+  
+  function validateCategoryData() {
+    return request.resource.data.keys().hasAll(['name', 'slug']) &&
+    request.resource.data.name is string &&
+    request.resource.data.name.size() > 0 &&
+    request.resource.data.slug is string &&
+    request.resource.data.slug.size() > 0;
+  }
+  
+  function validateTagData() {
+    return request.resource.data.keys().hasAll(['name', 'slug']) &&
+    request.resource.data.name is string &&
+    request.resource.data.name.size() > 0 &&
+    request.resource.data.slug is string &&
+    request.resource.data.slug.size() > 0;
+  }
+  
+  function validateCommentData() {
+    return request.resource.data.keys().hasAll(['postId', 'author', 'content', 'status']) &&
+    request.resource.data.postId is string &&
+    request.resource.data.author is map &&
+    request.resource.data.author.keys().hasAll(['name']) &&
+    request.resource.data.content is string &&
+    request.resource.data.content.size() > 0 &&
+    request.resource.data.status in ['pending', 'approved', 'spam', 'trashed'];
+  }
+
+  // Collection group rules for subcollections if needed
+  match /posts/{postId}/comments/{commentId} {
+    // Inherit rules from main comments collection
+    allow read: if get(/databases/$(database)/documents/comments/$(commentId)).data.status == 'approved' ||
+                       (isAuthenticated() && isActiveUser());
+    allow create: if isAuthenticated() && isActiveUser();
+    allow update, delete: if (
+      (isAuthenticated() && request.auth.uid == get(/databases/$(database)/documents/comments/$(commentId)).data.author.id) ||
+      isEditor()
+    ) && isActiveUser();
+  }
+}
