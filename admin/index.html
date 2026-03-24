@@ -7,15 +7,36 @@
 
   <!-- Bootstrap CSS -->
   <link
-    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/dist/css/bootstrap.min.css"
     rel="stylesheet"
     crossorigin="anonymous"
   />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
     body {
       background-color: #f5f7fb;
     }
+    .d-none { display: none !important; }
+    
+    /* Login Page Styles */
+    #loginWrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    }
+    #loginWrapper .card {
+      width: 100%;
+      max-width: 420px;
+      border: none;
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    /* Dashboard Styles */
     .sidebar {
       min-height: 100vh;
       background: #111827;
@@ -32,1388 +53,292 @@
       color: #f9fafb;
       background-color: #1f2937;
     }
-    .sidebar .navbar-brand {
-      color: #f9fafb;
-    }
-    .content-header {
-      border-bottom: 1px solid #e5e7eb;
-    }
+    .content-header { border-bottom: 1px solid #e5e7eb; }
     .card {
       border: none;
       box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
       border-radius: 0.75rem;
     }
-    .badge-status-draft {
-      background-color: #e5e7eb;
-      color: #374151;
-    }
-    .badge-status-published {
-      background-color: #16a34a;
-    }
-    .badge-status-scheduled {
-      background-color: #f59e0b;
-    }
-    .table thead th {
-      border-bottom-width: 1px;
-      color: #6b7280;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    .table > :not(caption) > * > * {
-      vertical-align: middle;
-    }
-    .chart-placeholder {
-      height: 220px;
-      background: repeating-linear-gradient(
-        -45deg,
-        #e5e7eb,
-        #e5e7eb 10px,
-        #f9fafb 10px,
-        #f9fafb 20px
-      );
-      border-radius: 0.75rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #6b7280;
-      font-size: 0.9rem;
-      font-weight: 500;
-      text-align: center;
-      padding: 0 1rem;
-    }
-    .media-thumb {
-      width: 52px;
-      height: 52px;
-      border-radius: 0.5rem;
-      object-fit: cover;
-    }
-    .seo-score-badge {
-      border-radius: 999px;
-      padding: 0.25rem 0.75rem;
-      font-weight: 600;
-      font-size: 0.8rem;
-    }
-    .seo-score-good {
-      background-color: rgba(22, 163, 74, 0.08);
-      color: #16a34a;
-    }
-    .comment-item {
-      border-bottom: 1px solid #e5e7eb;
-      padding-bottom: 0.75rem;
-      margin-bottom: 0.75rem;
-    }
-    .comment-item:last-child {
-      border-bottom: none;
-      margin-bottom: 0;
-      padding-bottom: 0;
-    }
-    .avatar-circle {
-      width: 36px;
-      height: 36px;
-      border-radius: 999px;
-      background-color: #e5e7eb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      color: #4b5563;
-      font-size: 0.9rem;
-    }
-    .stat-label {
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #6b7280;
-    }
-    .stat-value {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: #111827;
-    }
-    .dashboard-section.d-none {
-      display: none !important;
-    }
+    .stat-value { font-size: 1.5rem; font-weight: 700; color: #111827; }
+    .nav-link { cursor: pointer; }
   </style>
 </head>
 <body>
-  <div class="container-fluid">
-    <div class="row flex-nowrap">
+
+  <!-- Login Section -->
+  <div id="loginWrapper" class="d-none">
+    <div class="card p-4">
+      <div class="card-body">
+        <div class="text-center mb-4">
+          <div class="avatar-circle mx-auto mb-3" style="width: 60px; height: 60px; background: #3b82f6; color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+            <i class="fas fa-user-shield fa-2x"></i>
+          </div>
+          <h2 class="h4 fw-bold mb-1">Admin Access</h2>
+          <p class="text-muted small">Sign in to manage your blog platform</p>
+        </div>
+        
+        <form id="loginForm" onsubmit="return false;">
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">EMAIL</label>
+            <input type="email" id="email" class="form-control py-2" placeholder="admin@example.com" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">PASSWORD</label>
+            <input type="password" id="password" class="form-control py-2" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100 py-2 fw-bold" id="loginSubmitBtn">
+            Sign In
+          </button>
+        </form>
+        <div id="loginMessage" class="mt-3 text-center small"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard Section -->
+  <div id="dashboardWrapper" class="container-fluid d-none">
+    <div class="row">
       <!-- Sidebar -->
-      <nav class="col-12 col-md-3 col-lg-2 d-md-block sidebar px-3 py-3">
-        <div class="d-flex align-items-center mb-4">
-          <span class="navbar-brand fw-bold">Blog Admin</span>
+      <nav class="col-md-3 col-lg-2 d-md-block sidebar px-3 py-3">
+        <div class="d-flex align-items-center mb-4 px-2">
+          <i class="fas fa-feather-alt me-2 text-primary"></i>
+          <span class="h5 mb-0 fw-bold">PostFlow Admin</span>
         </div>
 
-        <!-- Mobile section selector -->
-        <div class="d-md-none mb-3">
-          <select id="mobileSectionSelect" class="form-select">
-            <option value="section-overview">Overview</option>
-            <option value="section-posts">Posts</option>
-            <option value="section-categories">Categories & Tags</option>
-            <option value="section-scheduling">Drafts & Scheduling</option>
-            <option value="section-analytics">Analytics</option>
-            <option value="section-users">Users & Permissions</option>
-            <option value="section-seo">SEO Tools</option>
-            <option value="section-media">Media Library</option>
-            <option value="section-comments">Comments</option>
-          </select>
-        </div>
-
-        <!-- Desktop nav -->
-        <ul class="nav nav-pills flex-column d-none d-md-flex" id="sidebarNav">
+        <ul class="nav nav-pills flex-column" id="sidebarNav">
           <li class="nav-item">
-            <button class="nav-link active" data-target="section-overview">Overview</button>
+            <button class="nav-link w-100 active" data-target="section-overview">
+              <i class="fas fa-chart-line me-2"></i> Overview
+            </button>
           </li>
           <li class="nav-item">
-            <button class="nav-link" data-target="section-posts">Posts</button>
+            <button class="nav-link w-100" data-target="section-posts">
+              <i class="fas fa-file-alt me-2"></i> Posts
+            </button>
           </li>
           <li class="nav-item">
-            <button class="nav-link" data-target="section-categories">Categories & Tags</button>
+            <button class="nav-link w-100" data-target="section-categories">
+              <i class="fas fa-tags me-2"></i> Categories & Tags
+            </button>
           </li>
           <li class="nav-item">
-            <button class="nav-link" data-target="section-scheduling">Drafts & Scheduling</button>
+            <button class="nav-link w-100" data-target="section-comments">
+              <i class="fas fa-comments me-2"></i> Comments
+            </button>
           </li>
           <li class="nav-item">
-            <button class="nav-link" data-target="section-analytics">Analytics</button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link" data-target="section-users">Users & Permissions</button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link" data-target="section-seo">SEO Tools</button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link" data-target="section-media">Media Library</button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link" data-target="section-comments">Comments</button>
+            <button class="nav-link w-100 text-danger mt-4" onclick="adminDashboard.handleLogout()">
+              <i class="fas fa-sign-out-alt me-2"></i> Logout
+            </button>
           </li>
         </ul>
       </nav>
 
       <!-- Main Content -->
-      <main class="col px-0">
-        <header class="content-header bg-white px-3 px-md-4 py-3 d-flex justify-content-between align-items-center">
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-0">
+        <header class="content-header bg-white px-4 py-3 d-flex justify-content-between align-items-center">
           <div>
-            <h1 class="h5 mb-1" id="sectionTitle">Overview</h1>
-            <p class="text-muted mb-0 small">
-              Manage your posts, audience and site health from a single dashboard.
-            </p>
+            <h1 class="h5 mb-0" id="sectionTitle">Dashboard</h1>
+            <div id="adminWelcome" class="small text-muted"></div>
           </div>
-          <div class="d-none d-md-flex gap-2">
-            <button class="btn btn-outline-secondary btn-sm">Preview Blog</button>
-            <button class="btn btn-primary btn-sm" id="headerNewPostBtn">
-              <span class="me-1">+</span> New Post
+          <div>
+            <button class="btn btn-primary px-3 btn-sm" id="headerNewPostBtn">
+              <i class="fas fa-plus me-1"></i> New Post
             </button>
           </div>
         </header>
 
-        <div class="p-3 p-md-4">
+        <div class="p-4">
           <!-- Overview -->
           <section id="section-overview" class="dashboard-section">
-            <div class="row g-3 mb-3">
-              <div class="col-12 col-md-3">
-                <div class="card h-100">
-                  <div class="card-body">
-                    <div class="stat-label mb-1">Total Posts</div>
-                    <div class="stat-value mb-1">0</div>
-                    <div class="text-success small fw-semibold">+0 this month</div>
-                  </div>
+            <!-- Stats -->
+            <div class="row g-4 mb-4">
+              <div class="col-md-3">
+                <div class="card p-3">
+                  <div class="text-muted small mb-1">Total Posts</div>
+                  <div class="stat-value" id="stat-total-posts">0</div>
                 </div>
               </div>
-              <div class="col-12 col-md-3">
-                <div class="card h-100">
-                  <div class="card-body">
-                    <div class="stat-label mb-1">Published</div>
-                    <div class="stat-value mb-1">0</div>
-                    <div class="small text-muted">0 drafts · 0 scheduled</div>
-                  </div>
+              <div class="col-md-3">
+                <div class="card p-3 border-start border-success border-4">
+                  <div class="text-muted small mb-1">Published</div>
+                  <div class="stat-value" id="stat-published-posts">0</div>
                 </div>
               </div>
-              <div class="col-12 col-md-3">
-                <div class="card h-100">
-                  <div class="card-body">
-                    <div class="stat-label mb-1">Monthly Views</div>
-                    <div class="stat-value mb-1">0</div>
-                    <div class="text-success small fw-semibold">+0% vs last month</div>
-                  </div>
+              <div class="col-md-3">
+                <div class="card p-3">
+                  <div class="text-muted small mb-1">Total Views</div>
+                  <div class="stat-value" id="stat-views">0</div>
                 </div>
               </div>
-              <div class="col-12 col-md-3">
-                <div class="card h-100">
-                  <div class="card-body">
-                    <div class="stat-label mb-1">Pending Comments</div>
-                    <div class="stat-value mb-1">0</div>
-                    <div class="small text-muted">Need moderation</div>
-                  </div>
+              <div class="col-md-3">
+                <div class="card p-3">
+                  <div class="text-muted small mb-1">Comments</div>
+                  <div class="stat-value" id="stat-comments">0</div>
                 </div>
               </div>
             </div>
 
-            <div class="row g-3">
-              <div class="col-12 col-lg-8">
-                <div class="card mb-3">
-                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h2 class="h6 mb-0">Recent Posts</h2>
-                    <button class="btn btn-sm btn-outline-secondary">View all</button>
-                  </div>
-                  <div class="card-body p-0">
-                    <div class="table-responsive">
-                      <table class="table mb-0 align-middle">
-                        <thead>
-                          <tr>
-                            <th>Title</th>
-                            <th>Status</th>
-                            <th>Category</th>
-                            <th>Views</th>
-                            <th>Updated</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>
-                              <div class="fw-semibold">No posts yet</div>
-                              <div class="small text-muted">Create your first post to get started</div>
-                            </td>
-                            <td><span class="badge badge-status-draft">Draft</span></td>
-                            <td>—</td>
-                            <td>—</td>
-                            <td>—</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="card">
-                  <div class="card-header bg-white">
-                    <h2 class="h6 mb-0">Engagement Over Time</h2>
-                  </div>
-                  <div class="card-body">
-                    <div class="chart-placeholder">
-                      Traffic & engagement chart placeholder – hook analytics here.
-                    </div>
-                  </div>
-                </div>
+            <!-- Recent Table -->
+            <div class="card">
+              <div class="card-header bg-white py-3">
+                <h6 class="mb-0 fw-bold">Recent Content</h6>
               </div>
-
-              <div class="col-12 col-lg-4">
-                <div class="card mb-3">
-                  <div class="card-header bg-white">
-                    <h2 class="h6 mb-0">Quick Actions</h2>
-                  </div>
-                  <div class="card-body">
-                    <div class="d-grid gap-2 mb-2">
-                      <button class="btn btn-primary btn-sm" id="quickNewPostBtn">Create New Post</button>
-                      <button class="btn btn-outline-secondary btn-sm">Upload Media</button>
-                      <button class="btn btn-outline-secondary btn-sm">Review Comments</button>
-                    </div>
-                    <p class="small text-muted mb-0">
-                      Use these shortcuts to stay in flow while managing your content.
-                    </p>
-                  </div>
-                </div>
-
-                <div class="card">
-                  <div class="card-header bg-white">
-                    <h2 class="h6 mb-0">SEO Health Snapshot</h2>
-                  </div>
-                  <div class="card-body">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                      <div>
-                        <div class="stat-label mb-1">Average SEO score</div>
-                        <div class="stat-value mb-0">0/100</div>
-                      </div>
-                      <span class="seo-score-badge">No data</span>
-                    </div>
-                    <ul class="list-unstyled small mb-0">
-                      <li class="d-flex justify-content-between mb-1">
-                        <span>Meta titles & descriptions</span>
-                        <span class="text-muted fw-semibold">No data</span>
-                      </li>
-                      <li class="d-flex justify-content-between mb-1">
-                        <span>Internal links</span>
-                        <span class="text-muted fw-semibold">No data</span>
-                      </li>
-                      <li class="d-flex justify-content-between mb-1">
-                        <span>Image alt text</span>
-                        <span class="text-muted fw-semibold">No data</span>
-                      </li>
-                      <li class="d-flex justify-content-between">
-                        <span>Page speed</span>
-                        <span class="text-muted fw-semibold">No data</span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
+              <div class="table-responsive">
+                <table class="table mb-0 align-middle">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Title</th>
+                      <th>Status</th>
+                      <th>Category</th>
+                      <th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
               </div>
             </div>
           </section>
 
-          <!-- Posts: creation, editing, publishing -->
+          <!-- Posts Management -->
           <section id="section-posts" class="dashboard-section d-none">
-            <div class="row g-3">
-              <div class="col-12 col-lg-8">
-                <div class="card mb-3">
-                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h2 class="h6 mb-0">Create / Edit Post</h2>
-                    <div class="btn-group btn-group-sm" role="group">
-                      <button type="button" class="btn btn-outline-secondary" id="saveDraftBtn">Save as Draft</button>
-                      <button type="button" class="btn btn-outline-secondary">Preview</button>
-                      <button type="submit" form="postForm" class="btn btn-primary" id="publishBtn">Publish</button>
+             <div class="card mb-4 p-4">
+                <h5 class="fw-bold mb-4">Create / Edit Post</h5>
+                <form id="postForm" onsubmit="return false;">
+                    <input type="hidden" id="postId" name="postId">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">POST TITLE</label>
+                                <input type="text" id="postTitle" name="postTitle" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">SLUG (URL)</label>
+                                <input type="text" id="postSlug" name="postSlug" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">EXCERPT</label>
+                                <textarea name="postExcerpt" id="postExcerpt" class="form-control" rows="2"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">CONTENT</label>
+                                <textarea name="postContent" id="postContent" class="form-control" rows="10" required></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card p-3 bg-light border-0 shadow-none mb-3">
+                                <label class="form-label small fw-bold">STATUS</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="postStatus" id="statusPublished" value="published" checked>
+                                    <label class="form-check-label" for="statusPublished">Published</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="postStatus" id="statusDraft" value="draft">
+                                    <label class="form-check-label" for="statusDraft">Draft</label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">CATEGORY</label>
+                                <select id="postCategory" name="postCategory" class="form-select"></select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">POST IMAGE</label>
+                                <input type="file" id="postImage" name="postImage" class="form-control mb-2">
+                                <div id="imagePreview" class="d-none mt-2">
+                                    <img src="" class="img-fluid rounded border shadow-sm">
+                                </div>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary py-2 fw-bold" id="publishBtn">Save Post</button>
+                                <button type="button" class="btn btn-outline-secondary" id="saveDraftBtn">Save Draft</button>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                  <div class="card-body">
-                    <form id="postForm" onsubmit="return false;">
-                      <input type="hidden" id="postId" name="postId" />
-                      <div class="mb-3">
-                        <label class="form-label">Title</label>
-                        <input type="text" class="form-control" id="postTitle" name="postTitle" placeholder="Write a clear, compelling title..." required />
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Slug</label>
-                        <input type="text" class="form-control" id="postSlug" name="postSlug" placeholder="auto-generated-from-title" required />
-                        <div class="form-text">Used in the URL; keep it short and descriptive.</div>
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Excerpt</label>
-                        <textarea class="form-control" id="postExcerpt" name="postExcerpt" rows="3" placeholder="Brief summary for listings..."></textarea>
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Content</label>
-                        <textarea
-                          class="form-control"
-                          id="postContent"
-                          name="postContent"
-                          rows="10"
-                          placeholder="Start writing your post here..."
-                          required
-                        ></textarea>
-                      </div>
-                      <div class="row g-3">
-                        <div class="col-md-4">
-                          <label class="form-label">Category</label>
-                          <select class="form-select" id="postCategory" name="postCategory">
-                            <option value="">Select Category</option>
-                          </select>
-                        </div>
-                        <div class="col-md-4">
-                          <label class="form-label">Tags (id)</label>
-                          <div id="postTags" class="border p-2 rounded bg-light" style="max-height: 100px; overflow-y: auto;">
-                            <!-- Tag checkboxes will be loaded here -->
-                          </div>
-                        </div>
-                        <div class="col-md-4">
-                          <label class="form-label">Featured image</label>
-                          <div class="input-group">
-                            <input type="file" class="form-control" id="postImage" name="postImage" accept="image/*" />
-                          </div>
-                          <div id="imagePreview" class="mt-2 text-center d-none">
-                            <img src="" alt="Preview" class="img-thumbnail" style="max-height: 100px;">
-                          </div>
-                        </div>
-                      </div>
-                    </form>
-                  </div>
-                </div>
+                </form>
+             </div>
 
-                <div class="card">
-                  <div class="card-header bg-white">
-                    <h2 class="h6 mb-0">Existing Posts</h2>
-                  </div>
-                  <div class="card-body p-0">
-                    <div class="table-responsive">
-                      <table class="table mb-0">
-                        <thead>
-                          <tr>
-                            <th>Title</th>
-                            <th>Status</th>
-                            <th>Author</th>
-                            <th>Published</th>
-                            <th></th>
-                          </tr>
+             <div class="card">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0 fw-bold">Manage Posts</h6>
+                </div>
+                <div class="table-responsive">
+                    <table class="table mb-0 align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Title</th>
+                                <th>Status</th>
+                                <th>Author</th>
+                                <th>Actions</th>
+                            </tr>
                         </thead>
-                        <tbody>
-                          <tr>
-                            <td>No posts yet</td>
-                            <td><span class="badge badge-status-draft">Draft</span></td>
-                            <td>You</td>
-                            <td>—</td>
-                            <td class="text-end">
-                              <button class="btn btn-sm btn-outline-secondary me-1">Create Post</button>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
+                        <tbody></tbody>
+                    </table>
                 </div>
-              </div>
-
-              <div class="col-12 col-lg-4">
-                <div class="card mb-3">
-                  <div class="card-header bg-white">
-                    <h2 class="h6 mb-0">Post Status</h2>
-                  </div>
-                  <div class="card-body">
-                    <div class="mb-3">
-                      <label class="form-label">Visibility</label>
-                      <select class="form-select" id="postVisibility" name="postVisibility" form="postForm">
-                        <option value="public">Public</option>
-                        <option value="unlisted">Unlisted</option>
-                        <option value="private">Private</option>
-                      </select>
-                    </div>
-                    <div class="mb-3">
-                      <label class="form-label">Publish status</label>
-                      <div class="form-check">
-                        <input class="form-check-input" type="radio" name="postStatus" id="statusDraft" value="draft" form="postForm" checked />
-                        <label class="form-check-label" for="statusDraft">Draft</label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input" type="radio" name="postStatus" id="statusPublished" value="published" form="postForm" />
-                        <label class="form-check-label" for="statusPublished">Publish immediately</label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input" type="radio" name="postStatus" id="statusScheduled" value="scheduled" form="postForm" />
-                        <label class="form-check-label" for="statusScheduled">Schedule for later</label>
-                      </div>
-                    </div>
-                    <div class="mb-3">
-                      <label class="form-label">Schedule date & time</label>
-                      <div class="row g-2">
-                        <div class="col-7">
-                          <input type="date" class="form-control" id="scheduleDate" name="scheduleDate" form="postForm" />
-                        </div>
-                        <div class="col-5">
-                          <input type="time" class="form-control" id="scheduleTime" name="scheduleTime" form="postForm" />
-                        </div>
-                      </div>
-                      <div class="form-text">Used when “Schedule for later” is selected.</div>
-                    </div>
-                    <button class="btn btn-outline-danger btn-sm">Move to Trash</button>
-                  </div>
-                </div>
-
-                <div class="card">
-                  <div class="card-header bg-white">
-                    <h2 class="h6 mb-0">Quick SEO Checks</h2>
-                  </div>
-                  <div class="card-body">
-                    <div class="mb-3">
-                      <label class="form-label">Focus keyword</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        placeholder="e.g. morning routine for creators"
-                      />
-                    </div>
-                    <ul class="list-unstyled small mb-0">
-                      <li class="d-flex justify-content-between mb-1">
-                        <span>Keyword in title</span>
-                        <span class="text-success fw-semibold">Yes</span>
-                      </li>
-                      <li class="d-flex justify-content-between mb-1">
-                        <span>Keyword in first paragraph</span>
-                        <span class="text-danger fw-semibold">No</span>
-                      </li>
-                      <li class="d-flex justify-content-between mb-1">
-                        <span>Images with alt text</span>
-                        <span class="text-warning fw-semibold">2/5</span>
-                      </li>
-                      <li class="d-flex justify-content-between">
-                        <span>Internal & external links</span>
-                        <span class="text-success fw-semibold">Good</span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
+             </div>
           </section>
 
-          <!-- Categories & Tags -->
+          <!-- Categories Section -->
           <section id="section-categories" class="dashboard-section d-none">
-            <div class="row g-3">
-              <div class="col-12 col-lg-6">
-                <div class="card h-100">
-                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h2 class="h6 mb-0">Categories</h2>
-                    <button class="btn btn-sm btn-primary">Add Category</button>
+              <div class="row g-4">
+                  <div class="col-md-6">
+                      <div class="card p-4">
+                          <h6 class="fw-bold mb-3">Add Category</h6>
+                          <form id="categoryForm" onsubmit="return false;">
+                              <div class="mb-3">
+                                  <label class="form-label small">Name</label>
+                                  <input type="text" placeholder="Category name" class="form-control" required>
+                              </div>
+                              <div class="mb-3">
+                                  <label class="form-label small">Slug</label>
+                                  <input type="text" placeholder="productivity" class="form-control" required>
+                              </div>
+                              <div class="mb-3">
+                                  <label class="form-label small">Description</label>
+                                  <textarea class="form-control" rows="2"></textarea>
+                              </div>
+                              <button type="submit" class="btn btn-primary btn-sm">Save Category</button>
+                          </form>
+                          <hr>
+                          <table class="table table-sm">
+                              <thead><tr><th>Name</th><th>Count</th></tr></thead>
+                              <tbody></tbody>
+                          </table>
+                      </div>
                   </div>
-                  <div class="card-body">
-                    <form class="mb-3" onsubmit="return false;">
-                      <div class="mb-2">
-                        <label class="form-label">Name</label>
-                        <input type="text" class="form-control" placeholder="Category name" />
+                  <div class="col-md-6">
+                      <div class="card p-4">
+                          <h6 class="fw-bold mb-3">Add Tag</h6>
+                          <form id="tagForm" onsubmit="return false;">
+                              <div class="mb-3">
+                                  <label class="form-label small">Name</label>
+                                  <input type="text" placeholder="Tag name" class="form-control" required>
+                              </div>
+                              <div class="mb-3">
+                                  <label class="form-label small">Slug</label>
+                                  <input type="text" placeholder="tag-slug" class="form-control" required>
+                              </div>
+                              <div class="mb-3">
+                                  <label class="form-label small d-block">Color</label>
+                                  <input type="color" class="form-control form-control-color w-100" value="#3b82f6">
+                              </div>
+                              <button type="submit" class="btn btn-primary btn-sm">Save Tag</button>
+                          </form>
+                          <hr>
+                          <table class="table table-sm">
+                              <thead><tr><th>Name</th></tr></thead>
+                              <tbody></tbody>
+                          </table>
                       </div>
-                      <div class="mb-2">
-                        <label class="form-label">Slug</label>
-                        <input type="text" class="form-control" placeholder="productivity" />
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Description</label>
-                        <textarea class="form-control" rows="2" placeholder="Optional, for internal use."></textarea>
-                      </div>
-                      <button type="submit" class="btn btn-sm btn-outline-secondary">Save Category</button>
-                    </form>
-                    <div class="table-responsive">
-                      <table class="table mb-0">
-                        <thead>
-                          <tr>
-                            <th>Name</th>
-                            <th>Posts</th>
-                            <th></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>No categories yet</td>
-                            <td>0</td>
-                            <td class="text-end">
-                              <button class="btn btn-sm btn-outline-secondary me-1">Add Category</button>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
                   </div>
-                </div>
               </div>
-
-              <div class="col-12 col-lg-6">
-                <div class="card h-100">
-                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h2 class="h6 mb-0">Tags</h2>
-                    <button class="btn btn-sm btn-primary">Add Tag</button>
-                  </div>
-                  <div class="card-body">
-                    <form class="mb-3" onsubmit="return false;">
-                      <div class="mb-2">
-                        <label class="form-label">Name</label>
-                        <input type="text" class="form-control" placeholder="Tag name" />
-                      </div>
-                      <div class="mb-2">
-                        <label class="form-label">Slug</label>
-                        <input type="text" class="form-control" placeholder="tag-slug" />
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Color (optional)</label>
-                        <input type="color" class="form-control form-control-color" value="#6366f1" />
-                      </div>
-                      <button type="submit" class="btn btn-sm btn-outline-secondary">Save Tag</button>
-                    </form>
-                    <div class="table-responsive">
-                      <table class="table mb-0">
-                        <thead>
-                          <tr>
-                            <th>Name</th>
-                            <th>Posts</th>
-                            <th></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>
-                              <span class="badge" style="background-color: rgba(99, 102, 241, 0.1); color: #4f46e5;">
-                                No tags yet
-                              </span>
-                            </td>
-                            <td>0</td>
-                            <td class="text-end">
-                              <button class="btn btn-sm btn-outline-secondary me-1">Add Tag</button>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- Drafts & Scheduling -->
-          <section id="section-scheduling" class="dashboard-section d-none">
-            <div class="row g-3">
-              <div class="col-12 col-lg-7">
-                <div class="card h-100">
-                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h2 class="h6 mb-0">Drafts</h2>
-                    <span class="badge bg-secondary-subtle text-secondary-emphasis">24 drafts</span>
-                  </div>
-                  <div class="card-body p-0">
-                    <div class="table-responsive">
-                      <table class="table mb-0">
-                        <thead>
-                          <tr>
-                            <th>Title</th>
-                            <th>Last Edited</th>
-                            <th>Category</th>
-                            <th></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>No drafts yet</td>
-                            <td>—</td>
-                            <td>—</td>
-                            <td class="text-end">
-                              <button class="btn btn-sm btn-outline-secondary me-1">Create Draft</button>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-12 col-lg-5">
-                <div class="card mb-3">
-                  <div class="card-header bg-white">
-                    <h2 class="h6 mb-0">Upcoming Schedule</h2>
-                  </div>
-                  <div class="card-body">
-                    <ul class="list-unstyled small mb-0">
-                      <li class="mb-2 d-flex justify-content-between">
-                        <div>
-                          <div class="fw-semibold">No scheduled posts</div>
-                          <div class="text-muted">Schedule posts to publish later</div>
-                        </div>
-                        <span class="badge badge-status-scheduled align-self-start">Scheduled</span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-
-                <div class="card">
-                  <div class="card-header bg-white">
-                    <h2 class="h6 mb-0">Schedule New Post</h2>
-                  </div>
-                  <div class="card-body">
-                    <form>
-                      <div class="mb-3">
-                        <label class="form-label">Select Draft</label>
-                        <select class="form-select">
-                          <option>No drafts available</option>
-                        </select>
-                      </div>
-                      <div class="row g-2 mb-3">
-                        <div class="col-7">
-                          <label class="form-label">Date</label>
-                          <input type="date" class="form-control" />
-                        </div>
-                        <div class="col-5">
-                          <label class="form-label">Time</label>
-                          <input type="time" class="form-control" />
-                        </div>
-                      </div>
-                      <button type="submit" class="btn btn-primary btn-sm">Schedule</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- Analytics -->
-          <section id="section-analytics" class="dashboard-section d-none">
-            <div class="row g-3 mb-3">
-              <div class="col-12 col-md-4">
-                <div class="card h-100">
-                  <div class="card-body">
-                    <div class="stat-label mb-1">Readers this month</div>
-                    <div class="stat-value mb-1">0</div>
-                    <div class="small text-muted">No data available</div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-12 col-md-4">
-                <div class="card h-100">
-                  <div class="card-body">
-                    <div class="stat-label mb-1">Avg. time on page</div>
-                    <div class="stat-value mb-1">0</div>
-                    <div class="small text-muted">No data available</div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-12 col-md-4">
-                <div class="card h-100">
-                  <div class="card-body">
-                    <div class="stat-label mb-1">Email signups from blog</div>
-                    <div class="stat-value mb-1">0</div>
-                    <div class="small text-muted">No data available</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="row g-3">
-              <div class="col-12 col-lg-8">
-                <div class="card mb-3">
-                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h2 class="h6 mb-0">Top Performing Posts</h2>
-                    <select class="form-select form-select-sm" style="max-width: 150px;">
-                      <option>Last 30 days</option>
-                      <option>Last 7 days</option>
-                      <option>Last 90 days</option>
-                    </select>
-                  </div>
-                  <div class="card-body p-0">
-                    <div class="table-responsive">
-                      <table class="table mb-0">
-                        <thead>
-                          <tr>
-                            <th>Post</th>
-                            <th>Views</th>
-                            <th>Avg. Time</th>
-                            <th>CTR</th>
-                            <th>Bounce</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>No posts yet</td>
-                            <td>0</td>
-                            <td>—</td>
-                            <td>—</td>
-                            <td>—</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="card">
-                  <div class="card-header bg-white">
-                    <h2 class="h6 mb-0">Traffic Sources</h2>
-                  </div>
-                  <div class="card-body">
-                    <div class="row g-3">
-                      <div class="col-6">
-                        <ul class="list-unstyled small mb-0">
-                          <li class="d-flex justify-content-between mb-1">
-                            <span>Search</span>
-                            <span class="fw-semibold">No data</span>
-                          </li>
-                          <li class="d-flex justify-content-between mb-1">
-                            <span>Direct</span>
-                            <span class="fw-semibold">No data</span>
-                          </li>
-                          <li class="d-flex justify-content-between mb-1">
-                            <span>Social</span>
-                            <span class="fw-semibold">No data</span>
-                          </li>
-                          <li class="d-flex justify-content-between">
-                            <span>Referrals</span>
-                            <span class="fw-semibold">No data</span>
-                          </li>
-                        </ul>
-                      </div>
-                      <div class="col-6">
-                        <div class="chart-placeholder">
-                          Source breakdown chart placeholder – connect to analytics provider.
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-12 col-lg-4">
-                <div class="card">
-                  <div class="card-header bg-white">
-                    <h2 class="h6 mb-0">Conversion by Post</h2>
-                  </div>
-                  <div class="card-body">
-                    <ul class="list-unstyled small mb-0">
-                      <li class="mb-2 d-flex justify-content-between">
-                        <div>
-                          <div class="fw-semibold">No posts yet</div>
-                          <div class="text-muted">Email signups</div>
-                        </div>
-                        <div class="text-end">
-                          <div class="fw-semibold">0%</div>
-                          <div class="text-muted">No data</div>
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- Users & Permissions -->
-          <section id="section-users" class="dashboard-section d-none">
-            <div class="row g-3">
-              <div class="col-12 col-lg-7">
-                <div class="card">
-                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h2 class="h6 mb-0">Users</h2>
-                    <button class="btn btn-sm btn-primary">Invite User</button>
-                  </div>
-                  <div class="card-body p-0">
-                    <div class="table-responsive">
-                      <table class="table mb-0">
-                        <thead>
-                          <tr>
-                            <th>User</th>
-                            <th>Role</th>
-                            <th>Status</th>
-                            <th>Last Active</th>
-                            <th></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>
-                              <div class="fw-semibold">You</div>
-                              <div class="text-muted small">you@example.com</div>
-                            </td>
-                            <td>Owner</td>
-                            <td><span class="badge bg-success-subtle text-success-emphasis">Active</span></td>
-                            <td>Just now</td>
-                            <td class="text-end">
-                              <button class="btn btn-sm btn-outline-secondary">Manage</button>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-12 col-lg-5">
-                <div class="card mb-3">
-                  <div class="card-header bg-white">
-                    <h2 class="h6 mb-0">Invite User</h2>
-                  </div>
-                  <div class="card-body">
-                    <form>
-                      <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-control" placeholder="person@example.com" />
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Role</label>
-                        <select class="form-select">
-                          <option>Owner</option>
-                          <option>Editor</option>
-                          <option>Author</option>
-                          <option>Contributor</option>
-                          <option>Viewer</option>
-                        </select>
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Permissions</label>
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="permPosts" checked />
-                          <label class="form-check-label" for="permPosts">Manage posts</label>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="permComments" checked />
-                          <label class="form-check-label" for="permComments">Moderate comments</label>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="permAnalytics" />
-                          <label class="form-check-label" for="permAnalytics">View analytics</label>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="permSettings" />
-                          <label class="form-check-label" for="permSettings">Manage settings</label>
-                        </div>
-                      </div>
-                      <button type="submit" class="btn btn-primary btn-sm">Send Invite</button>
-                    </form>
-                  </div>
-                </div>
-
-                <div class="card">
-                  <div class="card-header bg-white">
-                    <h2 class="h6 mb-0">Role Definitions</h2>
-                  </div>
-                  <div class="card-body">
-                    <ul class="small mb-0">
-                      <li class="mb-1">
-                        <strong>Owner</strong> – Full access to everything including billing and settings.
-                      </li>
-                      <li class="mb-1">
-                        <strong>Editor</strong> – Manage all posts, pages, media and comments.
-                      </li>
-                      <li class="mb-1">
-                        <strong>Author</strong> – Create and edit own posts, upload media.
-                      </li>
-                      <li class="mb-1">
-                        <strong>Contributor</strong> – Write drafts, cannot publish.
-                      </li>
-                      <li>
-                        <strong>Viewer</strong> – Read-only access to analytics and content.
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- SEO Tools -->
-          <section id="section-seo" class="dashboard-section d-none">
-            <div class="row g-3">
-              <div class="col-12 col-lg-7">
-                <div class="card mb-3">
-                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h2 class="h6 mb-0">SEO Preview</h2>
-                    <span class="seo-score-badge">Score: 0 / 100</span>
-                  </div>
-                  <div class="card-body">
-                    <form>
-                      <div class="mb-3">
-                        <label class="form-label">Meta title</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          placeholder="Your post title – Blog Name"
-                        />
-                        <div class="form-text small">50–60 characters recommended.</div>
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Meta description</label>
-                        <textarea
-                          class="form-control"
-                          rows="2"
-                          placeholder="Write a short, compelling description that makes people want to click..."
-                        ></textarea>
-                        <div class="form-text small">140–160 characters recommended.</div>
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Canonical URL</label>
-                        <input type="text" class="form-control" placeholder="https://yourblog.com/post-slug" />
-                      </div>
-                    </form>
-
-                    <div class="border rounded-3 p-3 bg-light small">
-                      <div class="text-muted mb-1">Google-style preview</div>
-                      <div class="text-primary" style="font-size: 0.95rem;">
-                        Your post title – Blog Name
-                      </div>
-                      <div class="text-success" style="font-size: 0.8rem;">https://yourblog.com/post-slug</div>
-                      <div class="text-muted" style="font-size: 0.8rem;">
-                        Preview of how your meta title and description could appear in search results.
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="card">
-                  <div class="card-header bg-white">
-                    <h2 class="h6 mb-0">SEO Checklist</h2>
-                  </div>
-                  <div class="card-body">
-                    <div class="row g-3">
-                      <div class="col-12 col-md-6">
-                        <ul class="list-unstyled small mb-0">
-                          <li class="mb-1">
-                            <input class="form-check-input me-1" type="checkbox" />
-                            Focus keyword in title
-                          </li>
-                          <li class="mb-1">
-                            <input class="form-check-input me-1" type="checkbox" />
-                            Focus keyword in first paragraph
-                          </li>
-                          <li class="mb-1">
-                            <input class="form-check-input me-1" type="checkbox" />
-                            Heading hierarchy is logical (H1 → H2 → H3)
-                          </li>
-                          <li>
-                            <input class="form-check-input me-1" type="checkbox" />
-                            At least one internal and external link
-                          </li>
-                        </ul>
-                      </div>
-                      <div class="col-12 col-md-6">
-                        <ul class="list-unstyled small mb-0">
-                          <li class="mb-1">
-                            <input class="form-check-input me-1" type="checkbox" />
-                            Images have descriptive alt text
-                          </li>
-                          <li class="mb-1">
-                            <input class="form-check-input me-1" type="checkbox" />
-                            Slug is short, readable and includes keyword
-                          </li>
-                          <li class="mb-1">
-                            <input class="form-check-input me-1" type="checkbox" />
-                            Mobile–friendly layout
-                          </li>
-                          <li>
-                            <input class="form-check-input me-1" type="checkbox" />
-                            Page loads quickly (under 3s)
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-12 col-lg-5">
-                <div class="card">
-                  <div class="card-header bg-white">
-                    <h2 class="h6 mb-0">Site-wide SEO Settings</h2>
-                  </div>
-                  <div class="card-body">
-                    <form>
-                      <div class="mb-3">
-                        <label class="form-label">Site title</label>
-                        <input type="text" class="form-control" placeholder="Your Blog Name" />
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Default meta description</label>
-                        <textarea
-                          class="form-control"
-                          rows="2"
-                          placeholder="Short description of your blog used when no custom description is set..."
-                        ></textarea>
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Social sharing image</label>
-                        <div class="input-group">
-                          <input type="text" class="form-control" placeholder="image url / filename" />
-                          <button class="btn btn-outline-secondary" type="button">Browse</button>
-                        </div>
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Robots</label>
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="robotsIndex" checked />
-                          <label class="form-check-label" for="robotsIndex">Allow search engines to index site</label>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="robotsFollow" checked />
-                          <label class="form-check-label" for="robotsFollow">
-                            Allow search engines to follow links
-                          </label>
-                        </div>
-                      </div>
-                      <button type="submit" class="btn btn-primary btn-sm">Save Settings</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- Media Library -->
-          <section id="section-media" class="dashboard-section d-none">
-            <div class="row g-3">
-              <div class="col-12 col-lg-8">
-                <div class="card mb-3">
-                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h2 class="h6 mb-0">Media Library</h2>
-                    <button class="btn btn-sm btn-primary">Upload</button>
-                  </div>
-                  <div class="card-body">
-                    <div class="row g-3">
-                      <div class="col-12">
-                        <div class="border rounded-3 p-4 text-center bg-light">
-                          <p class="mb-2">No media files yet</p>
-                          <p class="small text-muted mb-3">Upload images, videos, or documents to get started</p>
-                          <button class="btn btn-outline-secondary btn-sm">Upload Media</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="card">
-                  <div class="card-header bg-white">
-                    <h2 class="h6 mb-0">Details</h2>
-                  </div>
-                  <div class="card-body">
-                    <form>
-                      <div class="row g-3">
-                        <div class="col-12 col-md-6">
-                          <div class="mb-3">
-                            <label class="form-label">File name</label>
-                            <input type="text" class="form-control" value="" />
-                          </div>
-                          <div class="mb-3">
-                            <label class="form-label">Alt text</label>
-                            <input
-                              type="text"
-                              class="form-control"
-                              placeholder="Describe the image for accessibility"
-                            />
-                          </div>
-                        </div>
-                        <div class="col-12 col-md-6">
-                          <div class="mb-3">
-                            <label class="form-label">Caption</label>
-                            <textarea class="form-control" rows="2"></textarea>
-                          </div>
-                          <div class="mb-3">
-                            <label class="form-label">Used in posts</label>
-                            <input
-                              type="text"
-                              class="form-control"
-                              value="No posts yet"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <button class="btn btn-primary btn-sm" type="submit">Save Changes</button>
-                      <button class="btn btn-outline-danger btn-sm ms-2" type="button">Delete</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-12 col-lg-4">
-                <div class="card">
-                  <div class="card-header bg-white">
-                    <h2 class="h6 mb-0">Upload New Media</h2>
-                  </div>
-                  <div class="card-body">
-                    <div class="border border-dashed rounded-3 p-4 text-center mb-3 bg-light">
-                      <p class="mb-1">Drag & drop files here</p>
-                      <p class="small text-muted mb-2">or</p>
-                      <button class="btn btn-outline-secondary btn-sm">Choose files</button>
-                    </div>
-                    <p class="small text-muted mb-0">
-                      Recommended: JPG or PNG, max 5MB per file. For best performance, compress images before
-                      uploading.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- Comments -->
-          <section id="section-comments" class="dashboard-section d-none">
-            <div class="row g-3">
-              <div class="col-12 col-lg-7">
-                <div class="card">
-                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h2 class="h6 mb-0">Pending Comments</h2>
-                    <div class="btn-group btn-group-sm" role="group">
-                      <button class="btn btn-outline-secondary">Approve All</button>
-                      <button class="btn btn-outline-secondary">Mark All as Spam</button>
-                    </div>
-                  </div>
-                  <div class="card-body">
-                    <div class="text-center py-4">
-                      <p class="text-muted mb-2">No pending comments</p>
-                      <p class="small text-muted">Comments will appear here when they need moderation</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-12 col-lg-5">
-                <div class="card mb-3">
-                  <div class="card-header bg-white">
-                    <h2 class="h6 mb-0">Filters</h2>
-                  </div>
-                  <div class="card-body">
-                    <form class="row g-3">
-                      <div class="col-12 col-md-6">
-                        <label class="form-label">Status</label>
-                        <select class="form-select form-select-sm">
-                          <option>Pending</option>
-                          <option>Approved</option>
-                          <option>Spam</option>
-                          <option>Trash</option>
-                        </select>
-                      </div>
-                      <div class="col-12 col-md-6">
-                        <label class="form-label">Post</label>
-                        <select class="form-select form-select-sm">
-                          <option>All posts</option>
-                          <option>No posts yet</option>
-                        </select>
-                      </div>
-                      <div class="col-12">
-                        <label class="form-label">Search</label>
-                        <input
-                          type="text"
-                          class="form-control form-control-sm"
-                          placeholder="Search by author, content, or email"
-                        />
-                      </div>
-                    </form>
-                  </div>
-                </div>
-
-                <div class="card">
-                  <div class="card-header bg-white">
-                    <h2 class="h6 mb-0">Comment Settings</h2>
-                  </div>
-                  <div class="card-body">
-                    <form>
-                      <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="commentsOpen" checked />
-                        <label class="form-check-label" for="commentsOpen">Allow comments on new posts</label>
-                      </div>
-                      <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="commentsModerate" checked />
-                        <label class="form-check-label" for="commentsModerate">
-                          Comments must be manually approved
-                        </label>
-                      </div>
-                      <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="commentsEmail" />
-                        <label class="form-check-label" for="commentsEmail">
-                          Email me when someone comments
-                        </label>
-                      </div>
-                      <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="commentsSpam" checked />
-                        <label class="form-check-label" for="commentsSpam">
-                          Automatically flag comments with links as spam
-                        </label>
-                      </div>
-                      <button class="btn btn-primary btn-sm" type="submit">Save Settings</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
           </section>
         </div>
       </main>
     </div>
   </div>
 
-  <!-- Post Creation Modal -->
-  <div id="postModal" class="modal" style="display: none;">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Create New Post</h5>
-          <button type="button" class="btn-close" onclick="adminDashboard.closePostModal()"></button>
-        </div>
-        <form id="postForm">
-          <div class="modal-body">
-            <div class="row">
-              <div class="col-md-8">
-                <div class="mb-3">
-                  <label for="postTitle" class="form-label">Post Title</label>
-                  <input type="text" class="form-control" id="postTitle" name="postTitle" required>
-                </div>
-                <div class="mb-3">
-                  <label for="postSlug" class="form-label">Slug</label>
-                  <input type="text" class="form-control" id="postSlug" name="postSlug" required>
-                </div>
-                <div class="mb-3">
-                  <label for="postExcerpt" class="form-label">Excerpt</label>
-                  <textarea class="form-control" id="postExcerpt" name="postExcerpt" rows="3"></textarea>
-                </div>
-                <div class="mb-3">
-                  <label for="postContent" class="form-label">Content</label>
-                  <textarea class="form-control" id="postContent" name="postContent" rows="8"></textarea>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="mb-3">
-                  <label for="postStatus" class="form-label">Status</label>
-                  <select class="form-select" id="postStatus" name="postStatus">
-                    <option value="draft">Draft</option>
-                    <option value="published">Published</option>
-                    <option value="scheduled">Scheduled</option>
-                  </select>
-                </div>
-                <div class="mb-3">
-                  <label for="postCategory" class="form-label">Category</label>
-                  <select class="form-select" id="postCategory" name="postCategory">
-                    <option value="">Select Category</option>
-                  </select>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Tags</label>
-                  <div id="postTags" class="form-check-group">
-                    <!-- Tags will be loaded here -->
-                  </div>
-                </div>
-                <div class="mb-3">
-                  <label for="postImage" class="form-label">Featured Image</label>
-                  <input type="file" class="form-control" id="postImage" name="postImage" accept="image/*">
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" onclick="adminDashboard.closePostModal()">Cancel</button>
-            <button type="submit" class="btn btn-primary">Create Post</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- Bootstrap JS -->
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-    crossorigin="anonymous"
-  ></script>
-
-  <!-- Section switching -->
-  <script>
-    (function () {
-      const sectionTitle = document.getElementById("sectionTitle");
-      const sections = document.querySelectorAll(".dashboard-section");
-      const navButtons = document.querySelectorAll("#sidebarNav .nav-link");
-      const mobileSelect = document.getElementById("mobileSectionSelect");
-
-      function showSection(targetId) {
-        sections.forEach((section) => {
-          section.classList.toggle("d-none", section.id !== targetId);
-        });
-
-        navButtons.forEach((btn) => {
-          btn.classList.toggle("active", btn.getAttribute("data-target") === targetId);
-        });
-
-        const titles = {
-          "section-overview": "Overview",
-          "section-posts": "Posts",
-          "section-categories": "Categories & Tags",
-          "section-scheduling": "Drafts & Scheduling",
-          "section-analytics": "Analytics",
-          "section-users": "Users & Permissions",
-          "section-seo": "SEO Tools",
-          "section-media": "Media Library",
-          "section-comments": "Comments",
-        };
-        sectionTitle.textContent = titles[targetId] || "Dashboard";
-
-        if (mobileSelect && mobileSelect.value !== targetId) {
-          mobileSelect.value = targetId;
-        }
-      }
-
-      navButtons.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const target = btn.getAttribute("data-target");
-          if (target) showSection(target);
-        });
-      });
-
-      if (mobileSelect) {
-        mobileSelect.addEventListener("change", (e) => {
-          showSection(e.target.value);
-        });
-      }
-
-      // Initialize default view
-      showSection("section-overview");
-    })();
-  </script>
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module" src="admin.js"></script>
 </body>
 </html>
