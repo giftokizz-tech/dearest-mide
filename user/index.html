@@ -57,7 +57,7 @@
                         <a class="nav-link" href="#about">About</a>
                     </li>
                     <li class="nav-item ms-3">
-                        <button class="btn btn-sm btn-outline-primary" id="themeToggle" title="Toggle Dark Mode">
+                        <button class="btn btn-sm btn-outline-primary" id="themeToggle" title="Toggle Dark Mode" aria-label="Toggle Dark Mode">
                             <i class="fas fa-moon"></i>
                         </button>
                     </li>
@@ -105,14 +105,14 @@
                             <span class="badge bg-primary position-absolute top-3 start-3">Featured</span>
                         </div>
                         <div class="featured-content p-4">
-                            <h3 class="fw-bold mb-2">The Future of Web Development in 2024</h3>
-                            <p class="text-muted mb-3">Explore the latest trends and technologies shaping the web development landscape...</p>
+                            <h3 class="fw-bold mb-2">No Featured Posts Yet</h3>
+                            <p class="text-muted mb-3">Create your first post in the admin dashboard to feature it here.</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="author-info">
                                     <img src="https://i.pravatar.cc/40?img=1" class="rounded-circle me-2" alt="Author">
-                                    <small class="text-muted">By John Developer</small>
+                                    <small class="text-muted">Admin</small>
                                 </div>
-                                <a href="pages/post-detail.html" class="btn btn-primary btn-sm read-more-btn">Read More <i class="fas fa-arrow-right ms-2"></i></a>
+                                <a href="../admin/index.html" class="btn btn-primary btn-sm read-more-btn">Go to Admin <i class="fas fa-arrow-right ms-2"></i></a>
                             </div>
                         </div>
                     </div>
@@ -127,14 +127,14 @@
                             <span class="badge bg-primary position-absolute top-3 start-3">Featured</span>
                         </div>
                         <div class="featured-content p-4">
-                            <h3 class="fw-bold mb-2">Mastering Bootstrap: From Basics to Advanced</h3>
-                            <p class="text-muted mb-3">A comprehensive guide to building responsive web applications with Bootstrap 5...</p>
+                            <h3 class="fw-bold mb-2">Start Creating Content</h3>
+                            <p class="text-muted mb-3">Use the admin dashboard to create and manage your blog posts.</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="author-info">
                                     <img src="https://i.pravatar.cc/40?img=2" class="rounded-circle me-2" alt="Author">
-                                    <small class="text-muted">By Sarah Designer</small>
+                                    <small class="text-muted">Admin</small>
                                 </div>
-                                <a href="pages/post-detail.html" class="btn btn-primary btn-sm read-more-btn">Read More <i class="fas fa-arrow-right ms-2"></i></a>
+                                <a href="../admin/index.html" class="btn btn-primary btn-sm read-more-btn">Go to Admin <i class="fas fa-arrow-right ms-2"></i></a>
                             </div>
                         </div>
                     </div>
@@ -156,7 +156,7 @@
                             <i class="fas fa-laptop-code fa-3x text-primary"></i>
                         </div>
                         <h4 class="fw-bold mb-2">Technology</h4>
-                        <p class="text-muted mb-3">24 Articles</p>
+                        <p class="text-muted mb-3">No Articles Yet</p>
                         <a href="pages/search.html?category=technology" class="stretched-link"></a>
                     </div>
                 </div>
@@ -168,7 +168,7 @@
                             <i class="fas fa-heart fa-3x text-danger"></i>
                         </div>
                         <h4 class="fw-bold mb-2">Lifestyle</h4>
-                        <p class="text-muted mb-3">18 Articles</p>
+                        <p class="text-muted mb-3">No Articles Yet</p>
                         <a href="pages/search.html?category=lifestyle" class="stretched-link"></a>
                     </div>
                 </div>
@@ -180,7 +180,7 @@
                             <i class="fas fa-globe fa-3x text-success"></i>
                         </div>
                         <h4 class="fw-bold mb-2">Travel</h4>
-                        <p class="text-muted mb-3">21 Articles</p>
+                        <p class="text-muted mb-3">No Articles Yet</p>
                         <a href="pages/search.html?category=travel" class="stretched-link"></a>
                     </div>
                 </div>
@@ -192,7 +192,7 @@
                             <i class="fas fa-book-open fa-3x text-warning"></i>
                         </div>
                         <h4 class="fw-bold mb-2">Personal Growth</h4>
-                        <p class="text-muted mb-3">32 Articles</p>
+                        <p class="text-muted mb-3">No Articles Yet</p>
                         <a href="pages/search.html?category=growth" class="stretched-link"></a>
                     </div>
                 </div>
@@ -206,154 +206,16 @@
             <h2 class="section-title text-center mb-5" data-aos="fade-up">Latest Articles</h2>
             
             <div class="row g-4" id="postsGrid">
-                <!-- Post Card 1 -->
-                <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-duration="600">
-                    <article class="post-card h-100 overflow-hidden rounded-3 shadow-sm hover-shadow">
-                        <div class="post-image-wrapper position-relative">
-                            <img src="https://images.unsplash.com/photo-1516321318423-f06f70d504f0?w=500&h=300&fit=crop" class="img-fluid post-image" alt="Post">
-                            <div class="overlay-gradient-post"></div>
-                            <span class="badge bg-info position-absolute top-3 end-3">Design</span>
-                        </div>
-                        <div class="post-body p-4">
-                            <div class="post-meta mb-2">
-                                <small class="text-muted"><i class="far fa-calendar me-1"></i>Mar 8, 2024</small>
-                                <small class="text-muted ms-3"><i class="far fa-clock me-1"></i>5 min read</small>
-                            </div>
-                            <h5 class="post-title fw-bold mb-2">UI Design Trends That Will Dominate 2024</h5>
-                            <p class="post-excerpt text-muted mb-3">Discover the latest design trends that are reshaping the digital landscape...</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="author-avatar">
-                                    <img src="https://i.pravatar.cc/32?img=3" class="rounded-circle" alt="Author">
-                                </div>
-                                <a href="pages/post-detail.html" class="btn-link-arrow">Continue Reading <i class="fas fa-arrow-right ms-1"></i></a>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-
-                <!-- Post Card 2 -->
-                <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="100">
-                    <article class="post-card h-100 overflow-hidden rounded-3 shadow-sm hover-shadow">
-                        <div class="post-image-wrapper position-relative">
-                            <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=300&fit=crop" class="img-fluid post-image" alt="Post">
-                            <div class="overlay-gradient-post"></div>
-                            <span class="badge bg-success position-absolute top-3 end-3">Development</span>
-                        </div>
-                        <div class="post-body p-4">
-                            <div class="post-meta mb-2">
-                                <small class="text-muted"><i class="far fa-calendar me-1"></i>Mar 7, 2024</small>
-                                <small class="text-muted ms-3"><i class="far fa-clock me-1"></i>8 min read</small>
-                            </div>
-                            <h5 class="post-title fw-bold mb-2">Building Scalable Applications with Node.js</h5>
-                            <p class="post-excerpt text-muted mb-3">Learn best practices for creating high-performance backend systems...</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="author-avatar">
-                                    <img src="https://i.pravatar.cc/32?img=4" class="rounded-circle" alt="Author">
-                                </div>
-                                <a href="pages/post-detail.html" class="btn-link-arrow">Continue Reading <i class="fas fa-arrow-right ms-1"></i></a>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-
-                <!-- Post Card 3 -->
-                <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="200">
-                    <article class="post-card h-100 overflow-hidden rounded-3 shadow-sm hover-shadow">
-                        <div class="post-image-wrapper position-relative">
-                            <img src="https://images.unsplash.com/photo-1626699365915-25cf8e1535b9?w=500&h=300&fit=crop" class="img-fluid post-image" alt="Post">
-                            <div class="overlay-gradient-post"></div>
-                            <span class="badge bg-warning text-dark position-absolute top-3 end-3">Tutorial</span>
-                        </div>
-                        <div class="post-body p-4">
-                            <div class="post-meta mb-2">
-                                <small class="text-muted"><i class="far fa-calendar me-1"></i>Mar 6, 2024</small>
-                                <small class="text-muted ms-3"><i class="far fa-clock me-1"></i>10 min read</small>
-                            </div>
-                            <h5 class="post-title fw-bold mb-2">Complete Guide to React Hooks and State Management</h5>
-                            <p class="post-excerpt text-muted mb-3">Master React hooks and learn advanced state management patterns...</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="author-avatar">
-                                    <img src="https://i.pravatar.cc/32?img=5" class="rounded-circle" alt="Author">
-                                </div>
-                                <a href="pages/post-detail.html" class="btn-link-arrow">Continue Reading <i class="fas fa-arrow-right ms-1"></i></a>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-
-                <!-- Post Card 4 -->
-                <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="300">
-                    <article class="post-card h-100 overflow-hidden rounded-3 shadow-sm hover-shadow">
-                        <div class="post-image-wrapper position-relative">
-                            <img src="https://images.unsplash.com/photo-1522869635100-ce75fb8cc1ca?w=500&h=300&fit=crop" class="img-fluid post-image" alt="Post">
-                            <div class="overlay-gradient-post"></div>
-                            <span class="badge bg-danger position-absolute top-3 end-3">Wellness</span>
-                        </div>
-                        <div class="post-body p-4">
-                            <div class="post-meta mb-2">
-                                <small class="text-muted"><i class="far fa-calendar me-1"></i>Mar 5, 2024</small>
-                                <small class="text-muted ms-3"><i class="far fa-clock me-1"></i>6 min read</small>
-                            </div>
-                            <h5 class="post-title fw-bold mb-2">Mindfulness in the Digital Age: Finding Balance</h5>
-                            <p class="post-excerpt text-muted mb-3">Discover techniques and practices for maintaining mental health online...</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="author-avatar">
-                                    <img src="https://i.pravatar.cc/32?img=6" class="rounded-circle" alt="Author">
-                                </div>
-                                <a href="pages/post-detail.html" class="btn-link-arrow">Continue Reading <i class="fas fa-arrow-right ms-1"></i></a>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-
-                <!-- Post Card 5 -->
-                <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="400">
-                    <article class="post-card h-100 overflow-hidden rounded-3 shadow-sm hover-shadow">
-                        <div class="post-image-wrapper position-relative">
-                            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500&h=300&fit=crop" class="img-fluid post-image" alt="Post">
-                            <div class="overlay-gradient-post"></div>
-                            <span class="badge bg-secondary position-absolute top-3 end-3">Adventure</span>
-                        </div>
-                        <div class="post-body p-4">
-                            <div class="post-meta mb-2">
-                                <small class="text-muted"><i class="far fa-calendar me-1"></i>Mar 4, 2024</small>
-                                <small class="text-muted ms-3"><i class="far fa-clock me-1"></i>7 min read</small>
-                            </div>
-                            <h5 class="post-title fw-bold mb-2">Exploring Hidden Gems: Best Travel Destinations 2024</h5>
-                            <p class="post-excerpt text-muted mb-3">Uncover unique and authentic travel experiences around the world...</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="author-avatar">
-                                    <img src="https://i.pravatar.cc/32?img=7" class="rounded-circle" alt="Author">
-                                </div>
-                                <a href="pages/post-detail.html" class="btn-link-arrow">Continue Reading <i class="fas fa-arrow-right ms-1"></i></a>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-
-                <!-- Post Card 6 -->
-                <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="500">
-                    <article class="post-card h-100 overflow-hidden rounded-3 shadow-sm hover-shadow">
-                        <div class="post-image-wrapper position-relative">
-                            <img src="https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=500&h=300&fit=crop" class="img-fluid post-image" alt="Post">
-                            <div class="overlay-gradient-post"></div>
-                            <span class="badge bg-primary position-absolute top-3 end-3">Productivity</span>
-                        </div>
-                        <div class="post-body p-4">
-                            <div class="post-meta mb-2">
-                                <small class="text-muted"><i class="far fa-calendar me-1"></i>Mar 3, 2024</small>
-                                <small class="text-muted ms-3"><i class="far fa-clock me-1"></i>9 min read</small>
-                            </div>
-                            <h5 class="post-title fw-bold mb-2">Productivity Hacks: Work Smarter, Not Harder</h5>
-                            <p class="post-excerpt text-muted mb-3">Proven strategies to boost your productivity and achieve your goals...</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="author-avatar">
-                                    <img src="https://i.pravatar.cc/32?img=8" class="rounded-circle" alt="Author">
-                                </div>
-                                <a href="pages/post-detail.html" class="btn-link-arrow">Continue Reading <i class="fas fa-arrow-right ms-1"></i></a>
-                            </div>
-                        </div>
-                    </article>
+                <!-- No posts yet message -->
+                <div class="col-12 text-center py-5">
+                    <div class="empty-state">
+                        <i class="fas fa-newspaper fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted mb-2">No Articles Yet</h4>
+                        <p class="text-muted mb-4">Create your first post in the admin dashboard to see it here.</p>
+                        <a href="../admin/index.html" class="btn btn-primary btn-lg">
+                            <i class="fas fa-plus me-2"></i> Create Your First Post
+                        </a>
+                    </div>
                 </div>
             </div>
 

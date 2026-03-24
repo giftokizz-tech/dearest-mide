@@ -76,9 +76,53 @@ class AdminDashboard {
 
   // Load dashboard
   async loadDashboard() {
+    // Check if running from file:// protocol
+    if (window.location.protocol === 'file:') {
+      this.showFileProtocolWarning();
+      return;
+    }
+
     // Load the admin HTML and integrate Firebase
     this.setupEventListeners();
     this.loadOverview();
+  }
+
+  // Show warning when running from file:// protocol
+  showFileProtocolWarning() {
+    const warningHtml = `
+      <div class="container d-flex align-items-center justify-content-center min-vh-100">
+        <div class="card p-4 text-center" style="width: 100%; max-width: 600px;">
+          <div class="card-body">
+            <h3 class="card-title text-danger mb-3">
+              <i class="fas fa-exclamation-triangle me-2"></i>Security Warning
+            </h3>
+            <p class="card-text mb-4">
+              The admin dashboard cannot run directly from the file system due to security restrictions.
+              Firebase and external resources require a local development server.
+            </p>
+            <div class="alert alert-info mb-4">
+              <strong>Recommended Solutions:</strong>
+              <ul class="mb-0 mt-2">
+                <li>Use <code>Live Server</code> extension in VS Code</li>
+                <li>Run <code>python -m http.server</code> in project directory</li>
+                <li>Use <code>npm http-server</code> or similar</li>
+                <li>Deploy to a web server</li>
+              </ul>
+            </div>
+            <div class="d-grid gap-2">
+              <button class="btn btn-primary" onclick="window.open('https://marketplace.visualstudio.com/items?itemName=ritwickdey.liveserver', '_blank')">
+                Install Live Server Extension
+              </button>
+              <button class="btn btn-outline-secondary" onclick="window.open('https://developer.mozilla.org/en-US/docs/Learn/Common_questions/set_up_a_local_testing_server', '_blank')">
+                Learn More About Local Servers
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.innerHTML = warningHtml;
   }
 
   // Setup event listeners for admin interface
@@ -282,9 +326,157 @@ class AdminDashboard {
     return num.toString();
   }
 
-  // Event setup methods (placeholders for now)
+  // Event setup methods
   setupPostEvents() {
-    // Add event listeners for post management
+    // Add new post button
+    const addPostBtn = document.getElementById('addPostBtn');
+    if (addPostBtn) {
+      addPostBtn.addEventListener('click', () => this.showPostForm());
+    }
+
+    // Post form submission
+    const postForm = document.getElementById('postForm');
+    if (postForm) {
+      postForm.addEventListener('submit', (e) => this.handlePostSubmit(e));
+    }
+
+    // Category and tag management
+    this.setupCategoryManagement();
+    this.setupTagManagement();
+  }
+
+  // Show post creation form
+  showPostForm() {
+    const modal = document.getElementById('postModal');
+    if (modal) {
+      modal.style.display = 'block';
+      this.loadFormOptions();
+    }
+  }
+
+  // Load form options (categories, tags)
+  async loadFormOptions() {
+    try {
+      // Load categories
+      const categoriesQuery = query(collection(db, collectionNames.CATEGORIES), orderBy('name', 'asc'));
+      const categoriesSnapshot = await getDocs(categoriesQuery);
+      const categoriesSelect = document.getElementById('postCategory');
+      
+      if (categoriesSelect) {
+        categoriesSelect.innerHTML = '<option value="">Select Category</option>';
+        categoriesSnapshot.forEach(doc => {
+          const category = { id: doc.id, ...doc.data() };
+          const option = document.createElement('option');
+          option.value = category.id;
+          option.textContent = category.name;
+          categoriesSelect.appendChild(option);
+        });
+      }
+
+      // Load tags
+      const tagsQuery = query(collection(db, collectionNames.TAGS), orderBy('name', 'asc'));
+      const tagsSnapshot = await getDocs(tagsQuery);
+      const tagsContainer = document.getElementById('postTags');
+      
+      if (tagsContainer) {
+        tagsContainer.innerHTML = '';
+        tagsSnapshot.forEach(doc => {
+          const tag = { id: doc.id, ...doc.data() };
+          const checkbox = document.createElement('div');
+          checkbox.className = 'form-check form-check-inline';
+          checkbox.innerHTML = `
+            <input class="form-check-input" type="checkbox" id="tag-${tag.id}" value="${tag.id}">
+            <label class="form-check-label" for="tag-${tag.id}">${tag.name}</label>
+          `;
+          tagsContainer.appendChild(checkbox);
+        });
+      }
+    } catch (error) {
+      console.error('Error loading form options:', error);
+    }
+  }
+
+  // Handle post form submission
+  async handlePostSubmit(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const postData = {
+      title: formData.get('postTitle'),
+      slug: formData.get('postSlug'),
+      excerpt: formData.get('postExcerpt'),
+      content: formData.get('postContent'),
+      status: formData.get('postStatus'),
+      category: {
+        id: formData.get('postCategory'),
+        name: document.querySelector(`#postCategory option[value="${formData.get('postCategory')}"]`)?.textContent || ''
+      },
+      tags: Array.from(document.querySelectorAll('#postTags input[type="checkbox"]:checked')).map(cb => cb.value),
+      author: {
+        id: this.currentUser.uid,
+        name: this.currentUser.displayName || this.currentUser.email,
+        email: this.currentUser.email
+      },
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      views: 0,
+      likes: 0,
+      commentsCount: 0
+    };
+
+    try {
+      // Handle featured image upload
+      const imageFile = document.getElementById('postImage').files[0];
+      if (imageFile) {
+        const imageUrl = await this.uploadImage(imageFile);
+        postData.featuredImage = imageUrl;
+      }
+
+      // Save post
+      const docRef = await addDoc(collection(db, collectionNames.POSTS), postData);
+      
+      // Show success message
+      this.showNotification('Post created successfully!', 'success');
+      
+      // Close modal and refresh posts list
+      this.closePostModal();
+      this.loadPosts();
+      
+    } catch (error) {
+      console.error('Error creating post:', error);
+      this.showNotification('Error creating post: ' + error.message, 'error');
+    }
+  }
+
+  // Upload image to Firebase Storage
+  async uploadImage(file) {
+    const storageRef = ref(storage, `posts/${Date.now()}_${file.name}`);
+    const snapshot = await uploadBytes(storageRef, file);
+    return await getDownloadURL(snapshot.ref);
+  }
+
+  // Close post modal
+  closePostModal() {
+    const modal = document.getElementById('postModal');
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  }
+
+  // Show notification
+  showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+      ${message}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.remove();
+    }, 3000);
   }
 
   setupCategoryEvents() {

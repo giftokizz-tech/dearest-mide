@@ -325,36 +325,7 @@ function throttle(func, limit) {
 /* ===================== */
 
 // Mock data for posts (In production, this would come from API)
-const mockPosts = [
-    {
-        id: 1,
-        title: "The Future of Web Development in 2024",
-        excerpt: "Explore the latest trends and technologies shaping the web development landscape...",
-        content: "Full article content here...",
-        image: "https://images.unsplash.com/photo-1633356122544-f134324ef6db?w=800&h=400&fit=crop",
-        author: { name: "John Developer", avatar: "https://i.pravatar.cc/40?img=1" },
-        category: "Technology",
-        tags: ["web", "development", "trends"],
-        date: "2024-03-08",
-        readTime: 5,
-        views: 1250,
-        likes: 342
-    },
-    {
-        id: 2,
-        title: "Mastering Bootstrap: From Basics to Advanced",
-        excerpt: "A comprehensive guide to building responsive web applications with Bootstrap 5...",
-        content: "Full article content here...",
-        image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=400&fit=crop",
-        author: { name: "Sarah Designer", avatar: "https://i.pravatar.cc/40?img=2" },
-        category: "Design",
-        tags: ["bootstrap", "css", "responsive"],
-        date: "2024-03-07",
-        readTime: 8,
-        views: 980,
-        likes: 256
-    }
-];
+const mockPosts = [];
 
 // Get all posts
 function getAllPosts() {
