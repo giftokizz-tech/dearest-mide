@@ -36,15 +36,40 @@ class AuthService {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       
-      // Verify user has admin access
       const userProfile = await this.getUserProfile(user.uid);
-      if (!userProfile || !userProfile.isActive || !this.hasAdminRole(userProfile.role)) {
-        throw new Error('Access denied: You do not have admin privileges');
+      if (!userProfile || !userProfile.isActive) {
+        throw new Error('Access denied: Account not found or deactivated');
       }
       
       return { success: true, user };
     } catch (error) {
       console.error('Login error:', error);
+      throw new Error(this.getAuthErrorMessage(error.code));
+    }
+  }
+
+  // General signup for every user
+  async register(email, password, displayName) {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
+      const userProfile = {
+        uid: user.uid,
+        email: email,
+        displayName: displayName || email.split('@')[0],
+        role: 'user', // Default role which you can manually upgrade to admin later
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      await setDoc(doc(db, 'users', user.uid), userProfile);
+      await updateProfile(user, { displayName: userProfile.displayName });
+      
+      return { success: true, user, profile: userProfile };
+    } catch (error) {
+      console.error('Registration error:', error);
       throw new Error(this.getAuthErrorMessage(error.code));
     }
   }
@@ -196,7 +221,7 @@ class AuthService {
 
   // Check if user has admin role
   hasAdminRole(role) {
-    return ['admin', 'editor'].includes(role);
+    return ['admin', 'editor', 'user'].includes(role);
   }
 
   // Get current authenticated user
